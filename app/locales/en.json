@@ -1,0 +1,698 @@
+{
+  "common": {
+    "currency": "SAR",
+    "loading": "Loading...",
+    "no_data": "No data available",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search...",
+    "confirm": "Confirm",
+    "optional": "Optional",
+    "showing": "Showing",
+    "to": "to",
+    "of": "of",
+    "confirm_delete": "Confirm Permanent Delete",
+    "delete_confirm": "Delete?",
+    "delete_warning": "Are you sure you want to delete {name}?",
+    "delete_irreversible": "Warning: This action cannot be undone and all associated data will be deleted.",
+    "error_occurred": "Sorry, an error occurred",
+    "ok_got_it": "Ok, Got it"
+  },
+  "brand": {
+    "name": "Merchant",
+    "suffix": "Tqdr",
+    "description": "Your Integrated System for Customer Balance & Loyalty"
+  },
+  "auth": {
+    "login": "Login",
+    "login_btn": "Login Now",
+    "logging_in": "Logging in...",
+    "logout": "Logout",
+    "email": "Email Address",
+    "email_or_phone": "Email or Mobile Number",
+    "email_or_phone_placeholder": "admin{'@'}example.com or 05xxxxxxxx",
+    "password": "Password",
+    "error": "Authentication Failed",
+    "welcome": "Welcome Back",
+    "no_profile_error": "No permissions found for this account. Please contact administration.",
+    "rights": "All Rights Reserved",
+    "customer_otp": {
+      "title": "Customer Login",
+      "subtitle": "Track your balance and savings in seconds",
+      "phone_label": "Mobile Number",
+      "send_code": "Send Verification Code",
+      "sending_code": "Sending...",
+      "code_sent_to": "Verification code sent to",
+      "enter_code": "Enter 4-digit code",
+      "confirm_login": "Confirm & Login",
+      "verifying": "Verifying...",
+      "edit_phone": "Edit Mobile Number",
+      "secure_system": "Tqdr Secure Mobile Verification System",
+      "error_send": "Failed to send code. Please check the number.",
+      "error_invalid": "Invalid verification code."
+    }
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "customers": "Customers",
+    "transactions": "Transactions",
+    "settings": "Settings",
+    "shops": "Shops",
+    "admin_panel": "Admin Panel",
+    "overview": "Overview",
+    "reports": "Financial Reports",
+    "subscriptions_nav": "Subscriptions",
+    "merchant_dashboard": "Dashboard",
+    "manage_customers": "Manage Customers",
+    "transactions_history": "Transactions History",
+    "subscription_offers": "Subscription Offers"
+  },
+  "subscriptions": {
+    "title": "Subscriptions",
+    "offers": "Subscription Offers",
+    "subtitle": "Create and manage subscription offers for your customers to increase loyalty and activity.",
+    "add_offer": "Add New Offer",
+    "add_first": "Add Your First Offer",
+    "edit_offer": "Edit Offer",
+    "save_changes": "Save Changes",
+    "offer_name": "Offer Name",
+    "price": "Subscription Price (SAR)",
+    "usage_limit": "Usage Limit",
+    "discount": "Discount Value",
+    "duration": "Duration (Days)",
+    "duration_days": "Duration: {days} Days",
+    "usage_times": "Usage Limit: {count}",
+    "no_offers": "No offers currently",
+    "no_offers_desc": "Start by creating your first subscription offer for your customers to increase engagement with your store.",
+    "manage_subscribers": "Manage Subscribers",
+    "current_subscribers": "Current Subscribers ({count})",
+    "no_subscribers": "No current subscribers for this offer.",
+    "add_customer_to_offer": "Add Customer to Offer",
+    "search_customer": "Search for customer by name or number...",
+    "add_btn": "Add",
+    "remove_from_offer": "Remove from Offer",
+    "delete_offer_confirm": "Are you sure you want to delete offer {name}?",
+    "unsubscribe_confirm_title": "Cancel Subscription?",
+    "unsubscribe_confirm_desc": "Are you sure you want to remove this customer from the offer? They will no longer benefit from the discounts associated with this offer.",
+    "confirm_remove": "Confirm Removal",
+    "enable_feature": "Enable Subscriptions Feature",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "duration_unit": "Days"
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "welcome_back": "Welcome back",
+    "active_now": "Active Now",
+    "total_balance": "Total Balance",
+    "active_customers": "Active Customers",
+    "recent_transactions": "Recent Transactions",
+    "all_time": "All Time",
+    "today_stats": "Today's Stats",
+    "last_week": "Last Week",
+    "last_month": "Last Month",
+    "custom_range": "Custom Range",
+    "to": "to",
+    "admin_stats": {
+      "shops": "Total Shops",
+      "customers": "Total Customers",
+      "volume": "Transaction Volume",
+      "growth": "Monthly Growth",
+      "total_transactions": "Total Transactions",
+      "welcome_title": "Comprehensive report on the overall performance of Tqdr Plus.",
+      "daily_volume": "Daily Trading Volume",
+      "daily_volume_desc": "Monitoring liquidity across the platform (last 7 days)",
+      "platform_growth": "Platform Growth Rate",
+      "platform_growth_desc": "Comparison of new shops and customers joining",
+      "customer_distribution": "Customer Distribution",
+      "customer_distribution_desc": "Ratio of offer subscribers vs prepayment customers",
+      "prepaid_customers": "Prepaid Customers",
+      "subscribed_customers": "Subscribed Customers",
+      "shop_performance": "Shop Performance",
+      "shop_performance_desc": "Top performing shops by transactions and volume",
+      "shop_name": "Shop Name",
+      "transactions_count": "Transactions",
+      "trading_volume": "Trading Volume",
+      "recent_shops": "Recent Joined Shops",
+      "all_shops": "All Shops",
+      "no_new_shops": "No new shops found at the moment.",
+      "manage_all_customers": "Manage All Customers 👥",
+      "manage_all_customers_desc": "View and monitor all registered customers across all shops.",
+      "export_customers": "Export Customers List",
+      "search_placeholder": "Search by name or mobile number...",
+      "all_subscribers": "All Subscribers",
+      "subscribed_only": "Offer Subscribers",
+      "prepaid_only_filter": "Prepaid Customers",
+      "table": {
+        "customer": "Customer",
+        "shop": "Associated Shop",
+        "balance": "Balance",
+        "registered_at": "Registration Date",
+        "actions": "Actions",
+        "undefined_shop": "Not Defined"
+      },
+      "no_customers_found": "No customers found in the system.",
+      "edit_customer_title": "Edit Customer Data",
+      "delete_customer_confirm": "Confirm Delete Customer",
+      "delete_customer_desc": "Are you sure you want to delete this customer permanently? All their records will be wiped from the system.",
+      "confirm_delete_btn": "Yes, Delete Customer",
+      "reports": {
+        "title": "Transactions Log 📑",
+        "subtitle": "Monitor all financial transactions across the entire platform.",
+        "search_placeholder": "Search in notes or code...",
+        "all_offers": "All Offers / All",
+        "prepaid_only": "Prepaid Only",
+        "all_types": "All Types",
+        "deposit_only": "Deposit Only",
+        "withdrawal_only": "Withdrawal Only",
+        "table": {
+          "shop": "Store / Seller",
+          "customer": "Customer",
+          "type": "Type",
+          "amount": "Amount",
+          "date": "Date",
+          "prepaid": "General Balance"
+        }
+      },
+      "shops_management": {
+        "title": "Shops 🏪",
+        "subtitle": "Manage shop owner accounts and control their permissions.",
+        "add_shop": "Add New Shop Owner",
+        "search_placeholder": "Search by email or shop name...",
+        "table": {
+          "owner": "Shop Owner",
+          "shop_name": "Shop Name",
+          "joined_at": "Joined Date",
+          "status": "Status"
+        },
+        "add_modal": {
+          "title_add": "Add Shop Owner",
+          "title_edit": "Edit Shop Data",
+          "shop_name": "Shop Name",
+          "shop_name_placeholder": "e.g. Tech Store",
+          "email": "Email Address",
+          "password": "Temporary Password",
+          "phone_notifications": "Mobile Number",
+          "account_status": "Account Status",
+          "save_btn": "Save Changes",
+          "create_btn": "Create Account"
+        },
+        "delete_modal": {
+          "title": "Confirm Delete",
+          "desc": "Are you sure you want to delete this account permanently? This action cannot be undone.",
+          "confirm": "Yes, Delete Account"
+        },
+        "success_modal": {
+          "title": "Created Successfully!",
+          "desc": "The new shop account has been created and activated in the system.",
+          "ok": "OK"
+        }
+      },
+      "subscriptions_management": {
+        "title": "Subscriptions Management 💳",
+        "subtitle": "Enable subscription feature for stores and monitor their offers.",
+        "search_placeholder": "Search by shop name or email...",
+        "shop_name_placeholder": "No Name",
+        "feature_status": "Subscription Feature:",
+        "current_offers": "Current Offers",
+        "view_shop_details": "View Shop Details",
+        "no_offers": "No offers added for this shop.",
+        "price": "Price",
+        "discount": "Discount",
+        "days": "Days",
+        "delete_confirm": "Are you sure you want to delete this offer?"
+      },
+      "shop_details": {
+        "back_btn": "Back to Shops Management",
+        "loading": "Loading...",
+        "disable_subscriptions": "Disable Subscriptions",
+        "enable_subscriptions": "Enable Subscriptions",
+        "active_account": "Active Account",
+        "transactions_log": "Shop's Financial Transactions Log",
+        "customers_list": "Shop's Customers",
+        "no_transactions": "No transactions registered for this shop yet.",
+        "no_customers": "No customers added.",
+        "no_offers": "No offers added yet.",
+        "page": "Page",
+        "of": "of",
+        "usage_times": "times",
+        "stats": {
+          "total_customers": "Total Customers",
+          "total_balances": "Total Balances",
+          "total_transactions": "Total Transactions"
+        }
+      }
+    },
+    "merchant_stats": {
+      "welcome_desc": "Smart and comprehensive analysis of your store's real performance today.",
+      "new_customer": "New Customer",
+      "suspended_alert": "Your account is currently suspended. Please contact administration.",
+      "total_customers": "Total Customers",
+      "total_balances": "Total Balances",
+      "today_deposits": "Today's Deposits",
+      "today_withdrawals": "Today's Withdrawals",
+      "active_subscriptions": "Active Subscriptions Details",
+      "active_now": "Active Now",
+      "subscribers": "Subscribers",
+      "balance": "Balance",
+      "store_activity": "Store Activity & Liquidity",
+      "store_activity_desc": "Tracking deposits and withdrawals during the week",
+      "customer_segmentation": "Customer Segmentation",
+      "by_subscription_type": "By Subscription Type",
+      "balance_analysis": "Real Balance Distribution Analysis",
+      "balance_analysis_desc": "Comparison between prepaid balances and different subscription balances",
+      "recent_activity": "Recent Transactions",
+      "recent_activity_desc": "Real-time tracking of latest store activities",
+      "all_transactions": "All Transactions",
+      "prepaid_only": "Prepaid Only",
+      "view_full_history": "View Full History",
+      "syncing_data": "Syncing latest data...",
+      "no_transactions_filter": "No transactions recorded for this filter.",
+      "customer": "Customer",
+      "type": "Type",
+      "amount": "Amount",
+      "time": "Time",
+      "status": "Status",
+      "completed": "Completed",
+      "deposit": "Deposit",
+      "withdrawal": "Withdrawal",
+      "special_subscription": "Special Subscription Transaction"
+    },
+    "customer_stats": {
+      "welcome_back": "Welcome back",
+      "total_saved": "Total you saved with Tqdr",
+      "savings_desc": "You saved this amount through smart offers and subscriptions.",
+      "current_balance": "Current Balance",
+      "current_shop": "Current Store",
+      "premium_customer": "Premium Customer",
+      "active_subscriptions": "Your Active Subscriptions",
+      "subscription_count": "{count} subscription",
+      "premium": "Premium",
+      "subscription_status": "Subscription Status",
+      "active_now": "Active Now",
+      "recent_transactions": "Recent Transactions",
+      "view_all": "View All",
+      "no_transactions": "No transactions registered yet.",
+      "no_subscriptions": "No active subscriptions currently.",
+      "deposit": "Recharge Balance",
+      "withdraw": "Deduction from Balance",
+      "balance_after": "Balance: {balance} SAR",
+      "home": "Home",
+      "transactions": "Transactions",
+      "offers": "Offers",
+      "welcome_guest": "Welcome, our special customer",
+      "last_deposit": "Last Deposit",
+      "request_deposit": "Request Deposit",
+      "your_transactions": "Your Transactions",
+      "filter": "Filter",
+      "my_cards": "My Cards",
+      "notifications": "Notifications"
+    },
+    "user_status": {
+      "admin": "Administrator",
+      "merchant": "Merchant",
+      "customer": "Customer",
+      "online": "Online",
+      "offline": "Offline"
+    },
+    "landing": {
+      "hero": {
+        "tqdr_plus": "Tqdr Plus",
+        "smart_discount_system": "Smart Discount System",
+        "current_balance": "Current Balance",
+        "total_savings": "Total Savings",
+        "subscribe_now": "Subscribe Now"
+      },
+      "contact": {
+        "call_us": "Call Us",
+        "email_us": "Email Us",
+        "whatsapp": "WhatsApp"
+      }
+    }
+  },
+  "customers": {
+    "title": "Customer Management",
+    "subtitle": "Add new customers and manage their balances easily.",
+    "add_new": "Add New Customer",
+    "edit_customer": "Edit Customer Details",
+    "update_data": "Update Data",
+    "search_placeholder": "Search by name or mobile...",
+    "quick_actions": "Quick Actions",
+    "deposit_new": "New Recharge",
+    "withdraw_balance": "Deduct Balance",
+    "history": "History",
+    "history_title": "Customer Transaction History",
+    "no_customers": "No customers added yet",
+    "start_adding": "Start by adding the first customer to your store now",
+    "account_suspended": "Account suspended. Cannot add customers.",
+    "opening_balance": "Opening Balance",
+    "paid_amount": "Paid Amount (Cash)",
+    "added_balance": "Added Balance",
+    "select_offer": "Select Offer / Subscription",
+    "no_offer_prepaid": "No Offer (Prepaid Only)",
+    "save_customer_sub": "Save Customer & Subscription",
+    "available_balance": "Available balance for use",
+    "total_savings_desc": "Total discounted amounts",
+    "since": "Since",
+    "table": {
+      "name": "Customer Name",
+      "phone": "Mobile Number",
+      "balance": "Balance",
+      "total_savings": "Total Savings",
+      "actions": "Actions"
+    },
+    "errors": {
+      "suspended": "Cannot add new customers while account is suspended",
+      "login_required": "Please login first",
+      "insufficient_balance": "Insufficient customer balance",
+      "select_offer_first": "Please select a recharge offer first"
+    },
+    "sms": {
+      "welcome": "Welcome to {shop}! Your account has been successfully activated with a balance of {balance} SAR.",
+      "savings_info": " You saved {discount} SAR through your subscription in ({offer}).",
+      "footer": " Your total savings with us is {total} SAR. Track your balance at: tqdr.me/my",
+      "subscription_success": "Subscription ({offer}) successfully activated at {shop}. Your new balance is {balance} SAR. You saved {savings} SAR in this transaction, and your total savings with us is {total} SAR! Thank you for your trust.",
+      "subscription_activated": "Welcome! You have successfully subscribed to {offer} at {shop} for {price} SAR with {uses} uses. Duration: {duration} days.",
+      "subscription_success_simple": "Welcome! You have subscribed to {offer} at {shop} for {price} SAR with {uses} uses. Duration: {duration} days.",
+      "withdrawal_success": "SAR {amount} has been deducted from your balance at {shop}. Current balance: {balance} SAR. Your total savings is {total} SAR.",
+      "withdrawal_success_no_savings": "SAR {amount} has been deducted from your balance at {shop}. Current balance: {balance} SAR",
+      "withdrawal_success_saved": "SAR {amount} has been deducted from your balance at {shop}. Current balance: {balance} SAR. Amount saved in this transaction: {savings} SAR. Your total savings is {total} SAR!",
+      "offer_used": "Hello! You have used {offer} at {shop}. Remaining uses: {remaining}. Days left: {days}"
+    },
+    "withdrawal_type_title": "Withdrawal Type",
+    "withdrawal_type_prepaid": "General Balance Deduction",
+    "withdrawal_type_offer": "Subscription Offer Deduction",
+    "remaining_uses_label": "Remaining Uses"
+  },
+  "transactions": {
+    "title": "Transaction History",
+    "subtitle": "Complete record of all recharge and deduction operations.",
+    "new_transaction": "New Transaction",
+    "select_customer": "Select Customer",
+    "select_customer_placeholder": "Select a customer from the list",
+    "link_subscription": "Link to Subscription (Optional)",
+    "note_placeholder": "Write a note here...",
+    "success_title": "Transaction Successful",
+    "success_notified": "Operation executed successfully and notification sent to customer.",
+    "filters": {
+      "all": "All Transactions",
+      "all_offers": "All Offers",
+      "all_types": "All Types"
+    },
+    "table": {
+      "customer": "Customer Info",
+      "type": "Operation Type",
+      "amount": "Amount & Value",
+      "time": "Time",
+      "status": "Status"
+    },
+    "types": {
+      "deposit": "Recharge",
+      "withdrawal": "Deduction"
+    },
+    "status_labels": {
+      "completed": "Completed"
+    },
+    "date": "Time",
+    "amount": "Amount"
+  },
+  "landing": {
+    "nav": {
+      "home": "Home",
+      "features": "Features",
+      "how_it_works": "How it works",
+      "faq": "FAQ",
+      "contact": "Contact",
+      "pricing": "Pricing",
+      "login": "Login"
+    },
+    "hero": {
+      "tqdr_plus": "Tqdr Plus",
+      "smart_discount_system": "Smart Discount System",
+      "current_balance": "Current Balance",
+      "total_savings": "Total Savings",
+      "subscribe_now": "Subscribe Now",
+      "slides": [
+        {
+          "badge": "Special Offer 🎁",
+          "title": "One month free on prepayment service and subscriptions",
+          "subtitle": "No contracts, no risks. Take advantage of the offer and see the difference.",
+          "cta_primary": "Get Started",
+          "cta_secondary": "Discover More"
+        },
+        {
+          "badge": "Digital Loyalty 🇸🇦",
+          "title": "First Saudi loyalty system based on prepayment for discount",
+          "subtitle": "Document and track all prepayment operations and subscriptions for your business",
+          "cta_primary": "Join Us",
+          "cta_secondary": "Security Details"
+        },
+        {
+          "badge": "Smart Data 📊",
+          "title": "Restaurant, Cafe, Laundry, Beauty Center, Student Services...",
+          "subtitle": "Know your customer data, when they come, how many times, how much they spend, and guarantee they return tomorrow.",
+          "cta_primary": "Start Growing",
+          "cta_secondary": "View Stats"
+        },
+        {
+          "badge": "Effective Communication 💬",
+          "title": "SMS messages for shop customers to confirm balance and discount",
+          "subtitle": "Tqdr Plus strengthens the relationship between merchants and their customers",
+          "cta_primary": "Join Now",
+          "cta_secondary": "Live Demo"
+        },
+        {
+          "badge": "Ease of Use ✨",
+          "title": "Secure, easy interface, suitable for all cashier devices and mobile phones",
+          "subtitle": "Quick activation, easy to use safely, fits the nature of your project whatever your business activity.",
+          "cta_primary": "Get Started",
+          "cta_secondary": "View Offer"
+        }
+      ]
+    },
+    "stats": {
+      "badge": "Amazing Stats 📊",
+      "title": "Kingdom's Largest Loyalty Network",
+      "subtitle": "We take pride in supporting thousands of merchants and millions of customers.",
+      "partners": "Partners",
+      "customers": "Active Users",
+      "savings": "Total Savings",
+      "cities": "Cities Covered"
+    },
+    "how_it_works": {
+      "title": "How it works?",
+      "subtitle": "Simple steps to start your savings journey with Tqdr Plus",
+      "steps": [
+        {
+          "title": "Pay and Earn",
+          "desc": "Pay at the shop and get free credit."
+        },
+        {
+          "title": "Save Automatically",
+          "desc": "Use your credit at the time of purchase and save automatically."
+        },
+        {
+          "title": "Instant Notifications",
+          "desc": "You will receive an SMS message with discount details and the remaining amount immediately."
+        }
+      ]
+    },
+    "shop_benefits": {
+      "title": "Why join us?",
+      "subtitle": "Benefits for business owners",
+      "points": [
+        "Increases customer visit frequency and contributes to customer retention",
+        "Cash, liquidity, more and sustainable cash flow",
+        "A tool that enables you to manage and track all prepayment and subscription operations",
+        "Money is paid to you upfront"
+      ]
+    },
+    "customer_features": {
+      "badge": "Customer Benefits ✨",
+      "title": "Easier & Smarter Shopping",
+      "subtitle": "Save money and track your balances in your favorite stores via one secure platform.",
+      "features": [
+        {
+          "title": "Balance Tracking",
+          "desc": "Monitor every penny in your balance at all stores at a glance."
+        },
+        {
+          "title": "Instant Confirmations",
+          "desc": "Receive an SMS notification after every transaction with full details."
+        },
+        {
+          "title": "Continuous Savings",
+          "desc": "Benefit from exclusive discounts and offers available only to balance holders."
+        },
+        {
+          "title": "Financial Security",
+          "desc": "Your rights are protected and secured with the latest digital encryption."
+        }
+      ]
+    },
+    "shop_features": {
+      "badge": "Merchant Benefits 🏪",
+      "title": "Pro Tools for Shop Growth",
+      "subtitle": "Everything you need to manage customer relations and loyalty in one platform.",
+      "dashboard": "Smart Dashboard",
+      "revenue": "Revenue Analysis",
+      "live": "Live Tracking",
+      "features": [
+        {
+          "title": "CRM",
+          "desc": "Full record for each customer, their transactions, and preferences."
+        },
+        {
+          "title": "Growth Reports",
+          "desc": "Charts illustrating your business development and monthly performance."
+        },
+        {
+          "title": "Liquidity Management",
+          "desc": "Full control over cash flow and deposited balances."
+        },
+        {
+          "title": "Loyalty System",
+          "desc": "Advanced tools to ensure customers return for more purchases."
+        },
+        {
+          "title": "Gift Cards",
+          "desc": "Ability to send special offers to the most loyal customers."
+        },
+        {
+          "title": "Mobile Management",
+          "desc": "Integrated app allowing you to manage your business from anywhere."
+        }
+      ]
+    },
+    "contact": {
+      "title": "Contact Us",
+      "subtitle": "We're here to answer your questions and help you join the Tqdr network.",
+      "call_us": "Call Us",
+      "email_us": "Email Us",
+      "whatsapp": "WhatsApp",
+      "form": {
+        "name": "Full Name",
+        "email": "Email Address",
+        "message": "Your Message",
+        "send": "Send Message",
+        "success": "Sent successfully! We'll contact you soon."
+      }
+    },
+    "faq": {
+      "title": "FAQ",
+      "subtitle": "Everything you need to know about Tqdr",
+      "questions": [
+        {
+          "q": "How does Tqdr Plus differ from other loyalty programs?",
+          "a": "Tqdr Plus is a loyalty system based on upfront payments for shop owners, while other loyalty programs are point-based."
+        },
+        {
+          "q": "What is the difference between upfront payment service and subscriptions?",
+          "a": "Upfront payment acts as a credit for the customer (e.g., customer pays 100 for 120 credit). Subscriptions are for specific offers (e.g., pay 5 SAR for a 3 SAR discount on a meal for 6 visits)."
+        },
+        {
+          "q": "Are funds collected from the shop's customers?",
+          "a": "No funds are collected from the shop's customers."
+        },
+        {
+          "q": "How long does it take to activate the service? Do I need special devices or complex integrations?",
+          "a": "Activation takes a maximum of 24 hours. Tqdr Plus works on any POS device or mobile phone."
+        },
+        {
+          "q": "Can I track my sales and customers in real-time?",
+          "a": "Yes — your shop's dashboard gives you a complete picture of every transaction, every customer, and every riyal, moment by moment."
+        },
+        {
+          "q": "How do I receive money in advance?",
+          "a": "You place an advertising board with offers next to the cashier. When a customer requests a subscription offer, they pay you, and you register them in Tqdr Plus to monitor and document the transactions."
+        },
+        {
+          "q": "What happens if the number of my customers exceeds the current plan limit?",
+          "a": "You will receive an automatic notification to upgrade your plan — the upgrade is done with one click without any service interruption."
+        },
+        {
+          "q": "Are there long-term contracts or hidden fees?",
+          "a": "No restrictive contracts and no hidden fees — you pay your subscription and get the full service, the decision is always yours."
+        },
+        {
+          "q": "Is Tqdr+ suitable for a shop with only one branch?",
+          "a": "Absolutely — it was originally designed for independent shops and small projects, and it grows with you as you expand."
+        },
+        {
+          "q": "Can I stop the service whenever I want?",
+          "a": "Yes — you can stop your subscription at any time without penalties or complex conditions."
+        },
+        {
+          "q": "How does the seller know I have a balance?",
+          "a": "You give them your mobile number, and through the Tqdr Plus system, they know and deduct the amount, and you receive an SMS with the deduction and remaining balance."
+        },
+        {
+          "q": "Is the system secure?",
+          "a": "Yes, all data and transactions are secured according to the highest protection standards."
+        },
+        {
+          "q": "Is there technical support?",
+          "a": "Certainly, the support team is available via WhatsApp to assist you."
+        }
+      ]
+    },
+    "footer": {
+      "description": "Tqdr Plus is the ultimate solution for managing customer loyalty and saving money through local stores in an innovative and secure way.",
+      "quick_links": "Quick Links",
+      "contact_info": "Contact Info",
+      "rights": "Tqdr Plus. All Rights Reserved.",
+      "status": "Running 24/7"
+    },
+    "pricing": {
+      "badge": "Pricing & Plans",
+      "title": "Flexible Plans for Your Ambition",
+      "subtitle": "Choose the plan that fits your business size today",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "save": "Save 20%",
+      "popular": "Most Popular",
+      "per_month": "SAR/Mo",
+      "per_year": "SAR / Yr",
+      "custom_pricing": "Or Custom Pricing",
+      "start_plan": "Contact us to activate",
+      "contact_us": "Contact us to activate",
+      "need_help": "Having trouble?",
+      "starts_from": "Starts from",
+      "equivalent_to_monthly": "(Equivalent to {price} SAR monthly)",
+      "plans": {
+        "starter": {
+          "name": "Starter Plan",
+          "limit": "Up to 100 registered customers",
+          "description": "Ideal for barbershops, small cafes, and student services — start risk-free"
+        },
+        "growth": {
+          "name": "Growth Plan",
+          "limit": "Up to 350 registered customers",
+          "description": "For restaurants, laundries, and beauty centers — when business starts expanding"
+        },
+        "pro": {
+          "name": "Pro Plan",
+          "limit": "Up to 800 registered customers",
+          "description": "For medium projects with high daily traffic — car washes and active restaurants"
+        },
+        "expansion": {
+          "name": "Expansion Plan",
+          "limit": "Up to 2,000 registered customers",
+          "description": "For multiple branches and emerging brands — central management for all branches"
+        },
+        "enterprise": {
+          "name": "Enterprise Plan",
+          "limit": "Unlimited customers",
+          "description": "For chains and franchises — full integration, advanced reports, and dedicated account manager"
+        }
+      }
+    }
+  },
+  "admin": {
+    "welcome_sms": "Welcome as a shop owner on Tqdr Plus! Your account for {shop_name} has been created. Your login details: Mobile: {phone} Password: {password} Login Link: https://tqdrplus.sa/login"
+  }
+}
