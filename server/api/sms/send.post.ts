@@ -1,3 +1,5 @@
+import { serverSupabaseUser } from '#supabase/server'
+
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
   const body = await readBody(event)
@@ -11,24 +13,39 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  // Security: Verify the request comes from an authenticated user or internal server call
+  // Internal calls from other server routes ($fetch) will pass through
+  // External browser calls must have a valid Supabase session
+  const isInternalCall = event.node.req.headers['x-internal-api'] === 'true'
+
+  if (!isInternalCall) {
+    try {
+      const user = await serverSupabaseUser(event)
+      if (!user) {
+        throw createError({ statusCode: 401, message: 'Unauthorized: Authentication required' })
+      }
+    } catch {
+      throw createError({ statusCode: 401, message: 'Unauthorized: Authentication required' })
+    }
+  }
+
   // Format phone number (ensure it starts with 966 and contains only digits)
   let formattedPhone = phone.toString().replace(/\D/g, '')
-  
+
   if (formattedPhone.startsWith('05')) {
     formattedPhone = '966' + formattedPhone.substring(1)
   } else if (formattedPhone.startsWith('5') && formattedPhone.length === 9) {
     formattedPhone = '966' + formattedPhone
   }
 
-
-  const username = process.env.SMS_USERNAME || config.smsUsername
-  const password = process.env.SMS_PASSWORD || config.smsPassword
-  const sender = process.env.SMS_SENDER || config.smsSender
-  const token = process.env.SMS_TOKEN || config.smsToken
+  const username = config.smsUsername
+  const password = config.smsPassword
+  const sender = config.smsSender
+  const token = config.smsToken
 
   try {
     let response: any;
-    
+
     // If token is available, use the new REST API
     if (token) {
       response = await $fetch('https://api.oursms.com/msgs/sms', {
@@ -60,19 +77,8 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    console.log('--- SMS Service Report ---')
-    console.log('To:', formattedPhone)
-    console.log('Method:', token ? 'Token-based' : 'Credentials-based')
-    console.log('Status:', response)
-    console.log('--------------------------')
-
     return { success: true, response }
   } catch (error: any) {
-    console.error('--- SMS Service Error ---')
-    console.error('To:', phone)
-    console.error('Error Status:', error.statusCode)
-    console.error('Error Message:', error.data || error.message)
-    console.log('--------------------------')
     return { success: false, error: error.data || error.message }
   }
 })

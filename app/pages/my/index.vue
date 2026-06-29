@@ -27,9 +27,9 @@ definePageMeta({
 })
 
 const client = useSupabaseClient()
-const customerId = useCookie('customer_id')
+const customerToken = useCookie('customer_token')
 
-if (!customerId.value) {
+if (!customerToken.value) {
   navigateTo('/my/login')
 }
 
@@ -51,8 +51,9 @@ const fetchData = async () => {
     subscriptions.value = res.subscriptions
 
   } catch (e) {
-    console.error(e)
-    customerId.value = null
+    // Session invalid - clear and redirect to login
+    const tokenCookie = useCookie('customer_token')
+    tokenCookie.value = null
     navigateTo('/my/login')
   } finally {
     loading.value = false
@@ -60,7 +61,8 @@ const fetchData = async () => {
 }
 
 const handleLogout = () => {
-  customerId.value = null
+  const tokenCookie = useCookie('customer_token')
+  tokenCookie.value = null
   navigateTo('/my/login')
 }
 

@@ -1,8 +1,8 @@
-import { serverSupabaseClient } from '#supabase/server'
+import { serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
-  const client = await serverSupabaseClient(event)
+  const client = serverSupabaseServiceRole(event)
   const { phone } = body
 
   if (!phone) {
@@ -17,31 +17,31 @@ export default defineEventHandler(async (event) => {
     cleanPhone = '966' + cleanPhone
   }
 
-  // 2. Check if customer exists (Robust partial match)
+  // 2. Check if customer exists (exact match with multiple formats)
   const shortPhone = cleanPhone.startsWith('966') ? cleanPhone.substring(3) : cleanPhone
-  
-  const { data: customers, error: custError } = await client
+
+  const { data: customer } = await client
     .from('customers')
     .select('id')
-    .ilike('mobile_number', `%${shortPhone}%`)
+    .or(`mobile_number.eq.${cleanPhone},mobile_number.eq.0${shortPhone},mobile_number.eq.${shortPhone}`)
     .limit(1)
-
-  const customer = customers?.[0]
+    .maybeSingle()
 
   if (!customer) {
-    throw createError({ 
-      statusCode: 404, 
-      message: `عذراً، الرقم ${phone} غير مسجل كعميل في النظام.` 
+    throw createError({
+      statusCode: 404,
+      message: `عذراً، الرقم ${phone} غير مسجل كعميل في النظام.`
     })
   }
 
+  // 3. Delete old OTPs for this phone before creating new one
+  await client.from('otp_codes').delete().eq('phone', cleanPhone)
 
-
-  // 3. Generate 4-digit OTP
-  const otpCode = Math.floor(1000 + Math.random() * 9000).toString()
+  // 4. Generate 6-digit OTP (more secure than 4-digit)
+  const otpCode = Math.floor(100000 + Math.random() * 900000).toString()
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000) // 5 minutes validity
 
-  // 4. Save OTP to DB
+  // 5. Save OTP to DB
   const { error: otpError } = await client
     .from('otp_codes')
     .insert({
@@ -51,30 +51,24 @@ export default defineEventHandler(async (event) => {
     })
 
   if (otpError) {
-    console.error('Supabase OTP Error:', otpError)
-    throw createError({ 
-      statusCode: 500, 
-      message: `فشل حفظ كود التحقق: ${otpError.message}` 
+    throw createError({
+      statusCode: 500,
+      message: 'فشل حفظ كود التحقق. حاول مرة أخرى.'
     })
   }
 
-
-  // 5. Send SMS via OurSMS (using existing logic)
+  // 6. Send SMS via internal API
   try {
-    const config = useRuntimeConfig()
-    // Note: In a real app, we'd call the internal /api/sms/send or duplicate logic
-    // Since we are in the same server, we can call the SMS logic directly or fetch
-    const smsMessage = `كود التحقق الخاص بك في تقدر هو: ${otpCode}. صالح لمدة 5 دقائق.`
-    
-    // Using $fetch to call our own API
+    const smsMessage = `كود التحقق الخاص بك في تقدر بلس هو: ${otpCode}. صالح لمدة 5 دقائق.`
+
     await $fetch('/api/sms/send', {
       method: 'POST',
-      body: { phone: cleanPhone, message: smsMessage }
+      body: { phone: cleanPhone, message: smsMessage },
+      headers: { 'x-internal-api': 'true' }
     })
 
     return { success: true, message: 'تم إرسال كود التحقق بنجاح.' }
   } catch (err) {
-    console.error('OTP SMS Error:', err)
     throw createError({ statusCode: 500, message: 'فشل في إرسال رسالة الـ OTP.' })
   }
 })

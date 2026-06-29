@@ -1,20 +1,45 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
+import { createHmac } from 'crypto'
+
+// Verify signed customer cookie
+function verifyCustomerToken(token: string): string | null {
+  try {
+    const secret = process.env.NUXT_SUPABASE_SERVICE_KEY || ''
+    const parts = token.split('.')
+    if (parts.length !== 2) return null
+
+    const [customerId, signature] = parts
+    const expectedSig = createHmac('sha256', secret).update(customerId).digest('hex').substring(0, 16)
+
+    if (signature === expectedSig) {
+      return customerId
+    }
+    return null
+  } catch {
+    return null
+  }
+}
 
 export default defineEventHandler(async (event) => {
-  // 1. Get customer_id from cookie
-  const customerId = getCookie(event, 'customer_id')
-  if (!customerId) {
+  // 1. Get and verify signed customer token from cookie
+  const customerToken = getCookie(event, 'customer_token')
+  if (!customerToken) {
     throw createError({ statusCode: 401, message: 'Unauthorized' })
   }
 
-  // 2. Initialize service role client (synchronous in Nuxt Supabase)
+  const customerId = verifyCustomerToken(customerToken)
+  if (!customerId) {
+    throw createError({ statusCode: 401, message: 'Invalid or tampered session' })
+  }
+
+  // 2. Initialize service role client
   const client = serverSupabaseServiceRole(event)
 
   try {
-    // 3. Fetch Customer Data
+    // 3. Fetch Customer Data (select specific columns instead of *)
     const { data: customer, error: custError } = await client
       .from('customers')
-      .select('*')
+      .select('id, name, mobile_number, balance, total_saved, status, shop_owner_id, created_at')
       .eq('id', customerId)
       .single()
 
@@ -25,14 +50,14 @@ export default defineEventHandler(async (event) => {
     // 4. Fetch Shop Profile
     const { data: shop } = await client
       .from('profiles')
-      .select('*')
+      .select('id, shop_name, email')
       .eq('id', customer.shop_owner_id)
       .single()
 
     // 5. Fetch Transactions (prepaid only - no offer_id for real balance moves)
     const { data: allTransactions } = await client
       .from('transactions')
-      .select('*, shop:profiles!transactions_shop_owner_id_fkey(shop_name)')
+      .select('id, type, amount, paid_amount, saved_amount, balance_before, balance_after, note, offer_id, created_at, shop_owner_id, shop:profiles!transactions_shop_owner_id_fkey(shop_name)')
       .eq('customer_id', customerId)
       .order('created_at', { ascending: false })
       .limit(30)
@@ -40,55 +65,50 @@ export default defineEventHandler(async (event) => {
     // Filter to only show prepaid transactions (deposits and withdrawals without offer_id)
     const transactions = (allTransactions || []).filter(tx => !tx.offer_id)
 
-    // 6. Fetch All Subscriptions (active + expired for display)
+    // 6. Fetch All Subscriptions with offer details and shop name
     const { data: subscriptions } = await client
       .from('customer_subscriptions')
-      .select('*, offer:subscription_offers(*), shop:profiles!customer_subscriptions_shop_owner_id_fkey(shop_name)')
+      .select('id, status, expires_at, created_at, offer_id, shop_owner_id, offer:subscription_offers(id, name, price, usage_limit, discount, duration), shop:profiles!customer_subscriptions_shop_owner_id_fkey(shop_name)')
       .eq('customer_id', customerId)
       .order('created_at', { ascending: false })
 
-    // 7. Enrich subscriptions with usage count (number of offer-type transactions)
-    const enrichedSubscriptions = await Promise.all(
-      (subscriptions || []).map(async (sub) => {
-        // Count how many times this offer was used (withdrawal transactions linked to this offer)
-        const { count: usedCount } = await client
-          .from('transactions')
-          .select('*', { count: 'exact', head: true })
-          .eq('customer_id', customerId)
-          .eq('offer_id', sub.offer_id)
-          .eq('type', 'withdrawal')
+    // 7. Batch fetch usage counts for all subscriptions (solve N+1 problem)
+    const offerIds = [...new Set((subscriptions || []).map(s => s.offer_id).filter(Boolean))]
 
-        const usageLimit = sub.offer?.usage_limit || 0
-        const used = usedCount || 0
-        const remaining = Math.max(0, usageLimit - used)
+    let usageCounts: Record<string, number> = {}
+    if (offerIds.length > 0) {
+      const { data: usageData } = await client
+        .from('transactions')
+        .select('offer_id')
+        .eq('customer_id', customerId)
+        .eq('type', 'withdrawal')
+        .in('offer_id', offerIds)
 
-        // Calculate days remaining
-        const expiresDate = new Date(sub.expires_at)
-        const now = new Date()
-        const daysLeft = Math.max(0, Math.ceil((expiresDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)))
-        const isActive = expiresDate > now && remaining > 0
+      // Count per offer_id
+      for (const tx of (usageData || [])) {
+        usageCounts[tx.offer_id] = (usageCounts[tx.offer_id] || 0) + 1
+      }
+    }
 
-        return {
-          ...sub,
-          used_count: used,
-          remaining_uses: remaining,
-          days_left: daysLeft,
-          is_active: isActive
-        }
-      })
-    )
+    // Enrich subscriptions
+    const enrichedSubscriptions = (subscriptions || []).map((sub) => {
+      const usageLimit = sub.offer?.usage_limit || 0
+      const used = usageCounts[sub.offer_id] || 0
+      const remaining = Math.max(0, usageLimit - used)
 
-    // 8. Calculate total savings from prepaid only (from all shops)
-    // Savings = sum of discount amounts from prepaid withdrawal transactions
-    const { data: allSavingsData } = await client
-      .from('transactions')
-      .select('amount, balance_before, balance_after, offer_id')
-      .eq('customer_id', customerId)
-      .eq('type', 'withdrawal')
-      .is('offer_id', null) // prepaid only
+      const expiresDate = new Date(sub.expires_at)
+      const now = new Date()
+      const daysLeft = Math.max(0, Math.ceil((expiresDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)))
+      const isActive = expiresDate > now && remaining > 0
 
-    // total_saved is already tracked per customer record - we just verify it
-    // The field customer.total_saved should be our source of truth
+      return {
+        ...sub,
+        used_count: used,
+        remaining_uses: remaining,
+        days_left: daysLeft,
+        is_active: isActive
+      }
+    })
 
     return {
       customer,

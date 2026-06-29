@@ -11,7 +11,7 @@ const step = ref(1) // 1: Phone, 2: OTP
 const loading = ref(false)
 const errorMsg = ref('')
 
-const customerSession = useCookie('customer_id', { maxAge: 60 * 60 * 24 * 30 })
+
 
 const handleSendOTP = async () => {
   try {
@@ -43,7 +43,11 @@ const handleVerifyOTP = async () => {
     })
 
     if (res.success) {
-      customerSession.value = res.customerId
+      // Create signed session cookie via server API
+      await $fetch('/api/auth/customer-session', {
+        method: 'POST',
+        body: { customerId: res.customerId }
+      })
       navigateTo('/my', { replace: true })
     }
   } catch (e: any) {
@@ -118,9 +122,9 @@ const handleVerifyOTP = async () => {
               v-model="otpCode"
               type="text" 
               required
-              maxlength="4"
-              placeholder="0000"
-              class="w-full bg-slate-50 dark:bg-white/5 border border-transparent focus:border-emerald-500/30 rounded-2xl px-4 py-6 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all text-center text-4xl font-black tracking-[0.5em]"
+              maxlength="6"
+              placeholder="000000"
+              class="w-full bg-slate-50 dark:bg-white/5 border border-transparent focus:border-emerald-500/30 rounded-2xl px-4 py-6 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all text-center text-3xl font-black tracking-[0.3em]"
             />
           </div>
 
