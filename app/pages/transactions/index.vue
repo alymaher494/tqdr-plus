@@ -121,10 +121,10 @@ const fetchData = async () => {
 
     const range = getDateRangeParams()
 
-    // 1. Base Stats Query (joined with customers to support search filtering)
+    // 1. Build shared filters for both stats and transactions queries
     let statsQuery = client
       .from('transactions')
-      .select('type, amount, customer:customers!inner(name, mobile_number)')
+      .select('type, amount, offer_id, customer:customers!inner(name, mobile_number)')
       .eq('shop_owner_id', currentUser.id)
     
     if (range) {
@@ -135,8 +135,18 @@ const fetchData = async () => {
       statsQuery = statsQuery.or(`name.ilike.%${searchQuery.value}%,mobile_number.ilike.%${searchQuery.value}%`, { foreignTable: 'customers' })
     }
 
+    // Apply offer filter BEFORE executing stats query
+    if (offerFilter.value !== 'all') {
+      if (offerFilter.value === 'prepaid') {
+        statsQuery = statsQuery.is('offer_id', null)
+      } else {
+        statsQuery = statsQuery.eq('offer_id', offerFilter.value)
+      }
+    }
+
     const { data: statsData } = await statsQuery
     
+    // Calculate stats - for prepaid filter, only count prepaid withdrawals
     totalDeposits.value = statsData?.filter(t => t.type === 'deposit').reduce((acc, curr) => acc + Number(curr.amount), 0) || 0
     totalWithdrawals.value = statsData?.filter(t => t.type === 'withdrawal').reduce((acc, curr) => acc + Number(curr.amount), 0) || 0
 
@@ -156,12 +166,11 @@ const fetchData = async () => {
       txQuery = txQuery.eq('type', filterType.value)
     }
 
+    // Apply same offer filter to transaction query
     if (offerFilter.value !== 'all') {
       if (offerFilter.value === 'prepaid') {
-        statsQuery = statsQuery.is('offer_id', null)
         txQuery = txQuery.is('offer_id', null)
       } else {
-        statsQuery = statsQuery.eq('offer_id', offerFilter.value)
         txQuery = txQuery.eq('offer_id', offerFilter.value)
       }
     }
@@ -171,13 +180,7 @@ const fetchData = async () => {
     }
 
     const { data: txData, count } = await txQuery
-    // Filter out offer-related transactions from withdrawals display
-    // Offer deductions are not real balance withdrawals
-    const filteredForDisplay = (txData || []).filter(tx => {
-      if (tx.type === 'withdrawal' && tx.offer_id) return false // offer deductions are NOT withdrawals
-      return true
-    })
-    transactions.value = filteredForDisplay
+    transactions.value = txData || []
     totalTransactions.value = count || 0
 
     // 3. Fetch Customers for the dropdown

@@ -50,11 +50,10 @@ const loading = ref(true)
 const isSuspended = computed(() => profile.value?.status === 'suspended')
 
 const filteredTransactions = computed(() => {
-  // Only show prepaid withdrawals (no offer_id) and deposits - never subscription-related deductions
-  const prepaidOnly = recentTransactions.value.filter(tx => !tx.offer_id)
-  if (txFilter.value === 'all') return prepaidOnly.slice(0, 4)
-  if (txFilter.value === 'prepaid') return prepaidOnly.slice(0, 4)
-  return prepaidOnly.slice(0, 4)
+  // Only show prepaid transactions (no offer_id)
+  if (txFilter.value === 'deposits') return recentTransactions.value.filter(tx => tx.type === 'deposit').slice(0, 4)
+  if (txFilter.value === 'withdrawals') return recentTransactions.value.filter(tx => tx.type === 'withdrawal').slice(0, 4)
+  return recentTransactions.value.slice(0, 4)
 })
 
 // Chart Data
@@ -203,13 +202,14 @@ const fetchDashboardData = async () => {
     withdrawalData.value = withs
     chartDays.value = days
 
-    // 6. Recent Transactions (Fetch a bit more to allow local filtering)
+    // 6. Recent Transactions (fetch only prepaid - no offer_id)
     const { data: recentTxs } = await client
       .from('transactions')
       .select('*, customer:customers(name)')
       .eq('shop_owner_id', currentUser.id)
+      .is('offer_id', null)
       .order('created_at', { ascending: false })
-      .limit(20)
+      .limit(10)
     recentTransactions.value = recentTxs || []
     availableOffers.value = offers || []
 
@@ -425,17 +425,14 @@ onMounted(fetchDashboardData)
         </div>
 
         <div class="flex flex-wrap items-center gap-4">
-          <!-- Offer Filter Dropdown -->
           <div class="relative min-w-[200px]">
             <select 
               v-model="txFilter"
               class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-[18px] px-6 py-4 text-sm font-black text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500/50 appearance-none cursor-pointer shadow-sm"
             >
               <option value="all">{{ $t('dashboard.merchant_stats.all_transactions') }}</option>
-              <option value="prepaid">{{ $t('dashboard.merchant_stats.prepaid_only') }}</option>
-              <option v-for="offer in availableOffers" :key="offer.id" :value="offer.id">
-                {{ offer.name }}
-              </option>
+              <option value="deposits">{{ $t('dashboard.merchant_stats.deposit') }}</option>
+              <option value="withdrawals">{{ $t('dashboard.merchant_stats.withdrawal') }}</option>
             </select>
             <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400">
               <ChevronDown class="w-5 h-5" />
@@ -488,9 +485,6 @@ onMounted(fetchDashboardData)
                 <td class="px-10 py-8">
                   <p class="font-black text-2xl" :class="tx.type === 'deposit' ? 'text-emerald-500' : 'text-red-500'">
                     {{ tx.type === 'deposit' ? '+' : '-' }}{{ tx.amount }} <span class="text-xs opacity-60 font-bold">{{ $t('common.currency') }}</span>
-                  </p>
-                  <p v-if="tx.offer_id" class="text-[10px] text-amber-500 font-bold mt-1 uppercase tracking-wider flex items-center gap-1">
-                    <Sparkles class="w-3 h-3" /> {{ $t('dashboard.merchant_stats.special_subscription') }}
                   </p>
                 </td>
                 <td class="px-10 py-8">

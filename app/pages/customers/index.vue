@@ -330,9 +330,9 @@ const handleQuickTx = async () => {
             smsMessage = t('customers.sms.subscription_success', {
               offer: offer.name,
               shop: shopName,
-              balance: balanceAfter,
-              savings: savingAmount,
-              total: newTotalSaved
+              price: offer.price,
+              uses: offer.usage_limit,
+              duration: offer.duration
             })
           }
         } else {
