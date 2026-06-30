@@ -37,15 +37,19 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // 3. Get Customer ID (exact match using sanitized short phone)
+  // 3. Get Customer ID (exact match handling spaces in DB mobile_number)
   const shortPhone = cleanPhone.startsWith('966') ? cleanPhone.substring(3) : cleanPhone
+  const shortPhoneWithZero = '0' + shortPhone
 
-  const { data: customer } = await client
+  // We fetch customers for the merchant and match the sanitized phone numbers in memory to bypass DB spacing differences
+  const { data: allCustomers } = await client
     .from('customers')
-    .select('id')
-    .or(`mobile_number.eq.${cleanPhone},mobile_number.eq.0${shortPhone},mobile_number.eq.${shortPhone}`)
-    .limit(1)
-    .maybeSingle()
+    .select('id, mobile_number')
+
+  const customer = allCustomers?.find(c => {
+    const cleanDbPhone = (c.mobile_number || '').toString().replace(/\D/g, '')
+    return cleanDbPhone === cleanPhone || cleanDbPhone === shortPhone || cleanDbPhone === shortPhoneWithZero
+  })
 
   if (!customer) {
     throw createError({ statusCode: 404, message: 'العميل غير موجود.' })

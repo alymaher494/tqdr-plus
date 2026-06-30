@@ -17,20 +17,23 @@ export default defineEventHandler(async (event) => {
     cleanPhone = '966' + cleanPhone
   }
 
-  // 2. Check if customer exists (exact match with multiple formats)
+  // 2. Check if customer exists (exact match handling spacing in DB)
   const shortPhone = cleanPhone.startsWith('966') ? cleanPhone.substring(3) : cleanPhone
+  const shortPhoneWithZero = '0' + shortPhone
 
-  const { data: customer } = await client
+  const { data: allCustomers } = await client
     .from('customers')
-    .select('id')
-    .or(`mobile_number.eq.${cleanPhone},mobile_number.eq.0${shortPhone},mobile_number.eq.${shortPhone}`)
-    .limit(1)
-    .maybeSingle()
+    .select('id, mobile_number')
+
+  const customer = allCustomers?.find(c => {
+    const cleanDbPhone = (c.mobile_number || '').toString().replace(/\D/g, '')
+    return cleanDbPhone === cleanPhone || cleanDbPhone === shortPhone || cleanDbPhone === shortPhoneWithZero
+  })
 
   if (!customer) {
-    throw createError({
-      statusCode: 404,
-      message: `عذراً، الرقم ${phone} غير مسجل كعميل في النظام.`
+    throw createError({ 
+      statusCode: 404, 
+      message: `عذراً، الرقم ${phone} غير مسجل كعميل في النظام.` 
     })
   }
 
