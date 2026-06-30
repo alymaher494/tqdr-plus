@@ -13,9 +13,9 @@ export default defineEventHandler(async (event) => {
   const signature = createHmac('sha256', secret).update(customerId).digest('hex').substring(0, 16)
   const token = `${customerId}.${signature}`
 
-  // Set secure cookie
+  // Set secure cookie (accessible by client-side Nuxt useCookie)
   setCookie(event, 'customer_token', token, {
-    httpOnly: true,
+    httpOnly: false,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     maxAge: 60 * 60 * 24 * 30, // 30 days
