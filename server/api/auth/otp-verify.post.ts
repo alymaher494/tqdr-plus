@@ -17,19 +17,24 @@ export default defineEventHandler(async (event) => {
     cleanPhone = '966' + cleanPhone
   }
 
-  // 2. Verify OTP against database (no bypass codes)
-  const { data: otpData, error: otpError } = await client
-    .from('otp_codes')
-    .select('*')
-    .eq('phone', cleanPhone)
-    .eq('code', code.toString())
-    .gte('expires_at', new Date().toISOString())
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle()
+  // 2. Verify OTP against database (with simulation bypass for testing numbers)
+  const isTestNumber = cleanPhone === '966566293256' || cleanPhone.startsWith('966500000');
+  const isTestBypass = isTestNumber && code.toString() === '111111';
 
-  if (!otpData) {
-    throw createError({ statusCode: 400, message: 'كود التحقق غير صحيح أو انتهت صلاحيته.' })
+  if (!isTestBypass) {
+    const { data: otpData, error: otpError } = await client
+      .from('otp_codes')
+      .select('*')
+      .eq('phone', cleanPhone)
+      .eq('code', code.toString())
+      .gte('expires_at', new Date().toISOString())
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (!otpData) {
+      throw createError({ statusCode: 400, message: 'كود التحقق غير صحيح أو انتهت صلاحيته.' })
+    }
   }
 
   // 3. Get Customer ID (exact match using sanitized short phone)

@@ -78,7 +78,12 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // 6. Send SMS via internal API
+  // 6. Send SMS via internal API (bypass for test numbers)
+  const isTestNumber = cleanPhone === '966566293256' || cleanPhone.startsWith('966500000');
+  if (isTestNumber) {
+    return { success: true, message: 'تم إرسال كود التحقق بنجاح (رقم اختبارى).' }
+  }
+
   try {
     const smsMessage = `كود التحقق الخاص بك في تقدر بلس هو: ${otpCode}. صالح لمدة 5 دقائق.`
 
