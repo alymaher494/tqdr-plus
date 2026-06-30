@@ -44,7 +44,8 @@ export default defineEventHandler(async (event) => {
       .single()
 
     if (custError || !customer) {
-      throw createError({ statusCode: 404, message: 'Customer not found' })
+      deleteCookie(event, 'customer_token')
+      throw createError({ statusCode: 401, message: 'Customer session invalid or expired' })
     }
 
     // 4. Fetch Shop Profile
