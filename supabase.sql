@@ -149,4 +149,66 @@ CREATE POLICY "Shop owners can manage their customers' subscriptions" ON public.
     FOR ALL USING (auth.uid() = shop_owner_id);
 
 ALTER TABLE customers ADD COLUMN IF NOT EXISTS login_password TEXT;
-CREATE TABLE IF NOT EXISTS otp_codes (id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), phone TEXT NOT NULL, code TEXT NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(), expires_at TIMESTAMP WITH TIME ZONE NOT NULL);
+CREATE TABLE IF NOT EXISTS otp_codes (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), phone TEXT NOT NULL, code TEXT NOT NULL, created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(), expires_at TIMESTAMP WITH TIME ZONE NOT NULL);
+
+-- 8. Enforce status constraints on profiles
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'active' CHECK (status IN ('active', 'suspended'));
+
+-- 9. Database Trigger: Validate Transaction before insert
+CREATE OR REPLACE FUNCTION public.check_transaction_validity()
+RETURNS trigger AS $$
+DECLARE
+    merchant_status TEXT;
+    customer_balance DECIMAL(12,2);
+    subscription_exists BOOLEAN;
+BEGIN
+    -- A. Verify Merchant is not suspended
+    SELECT status INTO merchant_status FROM public.profiles WHERE id = NEW.shop_owner_id;
+    IF merchant_status = 'suspended' THEN
+        RAISE EXCEPTION 'Merchant account is suspended. Action denied.';
+    END IF;
+
+    -- B. Verify Customer belongs to this Merchant
+    IF NOT EXISTS (
+        SELECT 1 FROM public.customers 
+        WHERE id = NEW.customer_id AND shop_owner_id = NEW.shop_owner_id
+    ) THEN
+        RAISE EXCEPTION 'Invalid customer association.';
+    END IF;
+
+    -- C. Validate Withdrawal balances
+    IF NEW.type = 'withdrawal' THEN
+        SELECT balance INTO customer_balance FROM public.customers WHERE id = NEW.customer_id;
+        
+        -- C1. If it is a prepaid withdrawal (no offer_id)
+        IF NEW.offer_id IS NULL THEN
+            IF customer_balance < NEW.amount THEN
+                RAISE EXCEPTION 'Insufficient customer balance for withdrawal.';
+            END IF;
+        -- C2. If it is an offer subscription usage deduction
+        ELSE
+            -- Check if customer has an active subscription for this offer
+            SELECT EXISTS (
+                SELECT 1 FROM public.customer_subscriptions
+                WHERE customer_id = NEW.customer_id 
+                  AND offer_id = NEW.offer_id 
+                  AND status = 'active'
+                  AND expires_at >= NOW()
+            ) INTO subscription_exists;
+            
+            IF NOT subscription_exists THEN
+                RAISE EXCEPTION 'Customer does not have an active subscription for this offer.';
+            END IF;
+        END IF;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create Trigger on transactions
+DROP TRIGGER IF EXISTS tr_validate_transaction ON public.transactions;
+CREATE TRIGGER tr_validate_transaction
+    BEFORE INSERT ON public.transactions
+    FOR EACH ROW EXECUTE FUNCTION public.check_transaction_validity();
+

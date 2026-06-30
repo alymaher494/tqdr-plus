@@ -34,7 +34,28 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // 3. Delete old OTPs for this phone before creating new one
+  // 3. Rate Limit: Check if there is an OTP generated in the last 60 seconds
+  const { data: recentOtp } = await client
+    .from('otp_codes')
+    .select('created_at')
+    .eq('phone', cleanPhone)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (recentOtp) {
+    const timeDiff = Date.now() - new Date(recentOtp.created_at).getTime()
+    const cooldown = 60 * 1000 // 60 seconds
+    if (timeDiff < cooldown) {
+      const remainingSeconds = Math.ceil((cooldown - timeDiff) / 1000)
+      throw createError({
+        statusCode: 429,
+        message: `يرجى الانتظار ${remainingSeconds} ثانية قبل طلب رمز تحقق جديد.`
+      })
+    }
+  }
+
+  // 4. Delete old OTPs for this phone before creating new one
   await client.from('otp_codes').delete().eq('phone', cleanPhone)
 
   // 4. Generate 6-digit OTP (more secure than 4-digit)
