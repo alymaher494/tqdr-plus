@@ -388,7 +388,7 @@
     "withdrawal_type_title": "نوع عملية الخصم",
     "withdrawal_type_prepaid": "خصم من الرصيد العام",
     "withdrawal_type_offer": "استهلاك من اشتراك عرض",
-    "remaining_uses_label": "الاستخدامات المتبقية"
+    "remaining_uses_label": "عدد المرات المتبقي"
   },
   "transactions": {
     "title": "سجل العمليات",

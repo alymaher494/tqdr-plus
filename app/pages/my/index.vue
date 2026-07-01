@@ -292,44 +292,44 @@ onMounted(fetchData)
               <table class="w-full text-right">
                 <thead>
                   <tr class="bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
-                    <th class="px-4 py-4 text-xs font-black text-slate-500 uppercase">النوع</th>
-                    <th class="px-4 py-4 text-xs font-black text-slate-500 uppercase">المبلغ</th>
-                    <th class="px-4 py-4 text-xs font-black text-slate-500 uppercase">الرصيد</th>
                     <th class="px-4 py-4 text-xs font-black text-slate-500 uppercase">المحل</th>
+                    <th class="px-4 py-4 text-xs font-black text-slate-500 uppercase">نوع الخدمة</th>
+                    <th class="px-4 py-4 text-xs font-black text-slate-500 uppercase">المبلغ / القيمة</th>
+                    <th class="px-4 py-4 text-xs font-black text-slate-500 uppercase">الرصيد / المرات المتبقية</th>
                     <th class="px-4 py-4 text-xs font-black text-slate-500 uppercase">التاريخ</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-white/5">
                   <tr v-for="tx in transactions" :key="tx.id" class="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                     <td class="px-4 py-4">
+                      <p class="text-xs font-bold text-slate-900 dark:text-white">{{ tx.shop?.shop_name || shop?.shop_name || '-' }}</p>
+                    </td>
+                    <td class="px-4 py-4">
                       <div class="flex items-center gap-2">
-                        <div :class="tx.type === 'deposit' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'" class="w-8 h-8 rounded-xl flex items-center justify-center">
+                        <div :class="tx.type === 'deposit' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'" class="w-7 h-7 rounded-lg flex items-center justify-center">
                           <component :is="tx.type === 'deposit' ? ArrowUpCircle : ArrowDownCircle" class="w-4 h-4" />
                         </div>
                         <div>
                           <p class="text-xs font-black" :class="tx.type === 'deposit' ? 'text-emerald-500' : 'text-red-500'">
-                            {{ tx.type === 'deposit' ? $t('dashboard.customer_stats.deposit') : $t('dashboard.customer_stats.withdraw') }}
+                            {{ tx.type === 'deposit' ? 'شحن' : 'خصم' }}
                           </p>
-                          <p class="text-[9px] text-slate-400">{{ $t('dashboard.customer_stats.prepaid_service') }}</p>
+                          <p class="text-[9px] text-slate-400">{{ tx.offer_id ? 'عروض واشتراكات' : 'دفع مقدم' }}</p>
                         </div>
                       </div>
                     </td>
                     <td class="px-4 py-4">
                       <p class="font-black text-sm" :class="tx.type === 'deposit' ? 'text-emerald-500' : 'text-red-500'">
                         {{ tx.type === 'deposit' ? '+' : '-' }}{{ tx.amount }}
+                        <span class="text-[9px] opacity-70">{{ $t('common.currency') }}</span>
                       </p>
-                      <p class="text-[9px] text-slate-400">{{ $t('common.currency') }}</p>
                     </td>
                     <td class="px-4 py-4">
-                      <p class="font-black text-slate-900 dark:text-white text-sm">{{ tx.balance_after }}</p>
-                      <p class="text-[9px] text-slate-400">{{ $t('common.currency') }}</p>
-                    </td>
-                    <td class="px-4 py-4">
-                      <p class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ tx.shop?.shop_name || shop?.shop_name || '-' }}</p>
+                      <p class="font-black text-slate-900 dark:text-white text-sm">
+                        {{ tx.offer_id ? 'حساب باقة' : `${tx.balance_after} ${t('common.currency')}` }}
+                      </p>
                     </td>
                     <td class="px-4 py-4">
                       <p class="text-xs text-slate-500">{{ new Date(tx.created_at).toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' }) }}</p>
-                      <p class="text-[9px] text-slate-400">{{ new Date(tx.created_at).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) }}</p>
                     </td>
                   </tr>
                 </tbody>
@@ -351,7 +351,37 @@ onMounted(fetchData)
             <p class="text-slate-400 font-bold italic">{{ $t('dashboard.customer_stats.no_subscriptions') }}</p>
           </div>
 
-          <div v-else class="space-y-4">
+          <!-- Subscription Progress Chart (visual enhancement) -->
+          <div v-else class="grid grid-cols-1 gap-6">
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-[32px] border border-slate-100 dark:border-white/5 shadow-sm">
+              <h4 class="text-sm font-bold text-slate-500 mb-4 flex items-center gap-2">
+                <Activity class="w-4 h-4 text-emerald-500" />
+                تحليل استخدام الاشتراكات والعروض
+              </h4>
+              <div class="h-[240px]">
+                <ClientOnly>
+                  <ApexChart
+                    height="100%"
+                    width="100%"
+                    type="bar"
+                    :options="{
+                      chart: { type: 'bar', toolbar: { show: false }, stacked: true, fontFamily: 'Tajawal, sans-serif' },
+                      plotOptions: { bar: { horizontal: true, borderRadius: 8, barHeight: '50%' } },
+                      colors: ['#10b981', '#f59e0b'],
+                      xaxis: { categories: subscriptions.map(s => s.offer?.name || 'باقة'), labels: { show: false } },
+                      legend: { position: 'top', labels: { colors: '#94a3b8' } },
+                      grid: { show: false }
+                    }"
+                    :series="[
+                      { name: 'الزيارات المستخدمة', data: subscriptions.map(s => s.used_count || 0) },
+                      { name: 'الزيارات المتبقية', data: subscriptions.map(s => s.remaining_uses || 0) }
+                    ]"
+                  />
+                </ClientOnly>
+              </div>
+            </div>
+
+          <div class="space-y-4">
             <div v-for="sub in subscriptions" :key="sub.id" 
               class="bg-white dark:bg-slate-900 rounded-[35px] border border-slate-100 dark:border-white/5 shadow-lg overflow-hidden">
               
