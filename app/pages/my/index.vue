@@ -380,6 +380,7 @@ onMounted(fetchData)
                 </ClientOnly>
               </div>
             </div>
+          </div>
 
           <div class="space-y-4">
             <div v-for="sub in subscriptions" :key="sub.id" 
