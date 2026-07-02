@@ -286,6 +286,8 @@
     },
     "customer_stats": {
       "welcome_back": "أهلاً بك مجدداً",
+      "remaining_uses": "الاستخدامات المتبقية",
+      "remaining_days": "الأيام المتبقية",
       "total_saved": "إجمالي ما وفرته مع تقدر بلس",
       "savings_desc": "مجموع الأموال التي وفرتها من خدمة الدفع مقدماً.",
       "current_balance": "رصيدك الحالي",

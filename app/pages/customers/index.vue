@@ -162,7 +162,7 @@ const handleAddCustomer = async () => {
 
     // 2. Create Initial Transaction (if balance > 0)
     if (addedBalance > 0) {
-      await client.from('transactions').insert({
+      const { error: txError } = await client.from('transactions').insert({
         customer_id: customer.id,
         shop_owner_id: currentUser.id,
         type: 'deposit',
@@ -172,6 +172,7 @@ const handleAddCustomer = async () => {
         note: t('customers.opening_balance'),
         offer_id: form.value.offer_id || null
       })
+      if (txError) throw txError
     }
 
     // 3. Handle Subscription (if selected)
@@ -193,19 +194,37 @@ const handleAddCustomer = async () => {
       }
     }
     
-    // 4. Send Welcome SMS
+    // 4. Send Welcome or Subscription Success SMS
     try {
       const shopName = profile.value?.shop_name || 'Tqdr'
-      const smsMessage = t('customers.sms.welcome', { shop: shopName, balance: addedBalance })
-      await $fetch('/api/sms/send', {
-        method: 'POST',
-        body: {
-          phone: form.value.mobile_number,
-          message: smsMessage
+      let smsMessage = ''
+      
+      if (form.value.offer_id) {
+        const offer = availableOffers.value.find(o => o.id === form.value.offer_id)
+        if (offer) {
+          smsMessage = t('customers.sms.subscription_success', {
+            offer: offer.name,
+            shop: shopName,
+            price: offer.price,
+            uses: offer.usage_limit,
+            duration: offer.duration
+          })
         }
-      })
+      } else {
+        smsMessage = t('customers.sms.welcome', { shop: shopName, balance: addedBalance })
+      }
+
+      if (smsMessage) {
+        await $fetch('/api/sms/send', {
+          method: 'POST',
+          body: {
+            phone: form.value.mobile_number,
+            message: smsMessage
+          }
+        })
+      }
     } catch (smsErr) {
-      console.error('Failed to send welcome SMS:', smsErr)
+      console.error('Failed to send registration SMS:', smsErr)
     }
 
     showAddModal.value = false
@@ -289,7 +308,7 @@ const handleQuickTx = async () => {
     }
 
     // 3. Create Transaction
-    await client.from('transactions').insert({
+    const { error: txError } = await client.from('transactions').insert({
       customer_id: customer.id,
       shop_owner_id: currentUser.id,
       type: txForm.value.type,
@@ -299,6 +318,7 @@ const handleQuickTx = async () => {
       note: txForm.value.service_type === 'offer' ? `استخدام عرض: ${txForm.value.note}` : txForm.value.note,
       offer_id: (txForm.value.type === 'deposit' && txForm.value.offer_id) ? txForm.value.offer_id : (txForm.value.service_type === 'offer' ? txForm.value.offer_id || null : null)
     })
+    if (txError) throw txError
 
     showTxModal.value = false
     
@@ -309,12 +329,13 @@ const handleQuickTx = async () => {
         const expiresAt = new Date()
         expiresAt.setDate(expiresAt.getDate() + offer.duration)
 
-        await client.from('customer_subscriptions').insert({
+        const { error: subError } = await client.from('customer_subscriptions').insert({
           customer_id: customer.id,
           offer_id: offer.id,
           shop_owner_id: currentUser.id,
           expires_at: expiresAt.toISOString()
         })
+        if (subError) throw subError
       }
     }
 

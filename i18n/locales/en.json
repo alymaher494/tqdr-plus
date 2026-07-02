@@ -284,6 +284,8 @@
     },
     "customer_stats": {
       "welcome_back": "Welcome back",
+      "remaining_uses": "Remaining Uses",
+      "remaining_days": "Remaining Days",
       "total_saved": "Total you saved with Tqdr Plus",
       "savings_desc": "Total savings you got from prepayment service.",
       "current_balance": "Current Balance",

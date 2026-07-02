@@ -218,7 +218,7 @@ const handleAddSubscriber = async (customerId: string) => {
 
     // 3. Create Transaction for tracking (even if free)
     const { data: custProfile } = await client.from('customers').select('balance').eq('id', customerId).single()
-    await client.from('transactions').insert({
+    const { error: txError } = await client.from('transactions').insert({
       customer_id: customerId,
       shop_owner_id: authUser.id,
       offer_id: offer.id,
@@ -228,6 +228,7 @@ const handleAddSubscriber = async (customerId: string) => {
       balance_after: custProfile?.balance || 0,
       note: `${t('nav.subscriptions_nav')}: ${offer.name}`
     })
+    if (txError) throw txError
 
     await fetchSubscribers(offer.id)
     

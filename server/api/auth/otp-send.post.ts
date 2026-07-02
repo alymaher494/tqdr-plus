@@ -81,21 +81,17 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // 6. Send SMS via internal API (bypass for test numbers)
-  const isTestNumber = cleanPhone === '966566293256' || cleanPhone.startsWith('966500000');
+  // 6. Send SMS directly (bypass for test numbers in non-production environments only)
+  const isDev = process.env.NODE_ENV !== 'production'
+  const isTestNumber = isDev && (cleanPhone === '966566293256' || cleanPhone === '966500000000')
+
   if (isTestNumber) {
     return { success: true, message: 'تم إرسال كود التحقق بنجاح (رقم اختبارى).' }
   }
 
   try {
     const smsMessage = `كود التحقق الخاص بك في تقدر بلس هو: ${otpCode}. صالح لمدة 5 دقائق.`
-
-    await $fetch('/api/sms/send', {
-      method: 'POST',
-      body: { phone: cleanPhone, message: smsMessage },
-      headers: { 'x-internal-api': 'true' }
-    })
-
+    await sendSMS(cleanPhone, smsMessage)
     return { success: true, message: 'تم إرسال كود التحقق بنجاح.' }
   } catch (err) {
     throw createError({ statusCode: 500, message: 'فشل في إرسال رسالة الـ OTP.' })
