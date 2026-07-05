@@ -35,7 +35,7 @@ if (import.meta.client) {
       <div class="max-w-7xl mx-auto px-4 sm:px-6">
         <div class="flex justify-between items-center h-20">
           <NuxtLink to="/" class="flex items-center gap-3">
-            <img src="/logo.png" alt="Tqdr Plus Logo" class="h-16 w-auto" />
+            <AppLogo class="h-16 w-auto" />
           </NuxtLink>
 
           <!-- Desktop Nav -->

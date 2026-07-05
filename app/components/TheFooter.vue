@@ -10,7 +10,7 @@ const { locale } = useI18n()
         <!-- Logo + Description -->
         <div class="lg:col-span-2 flex flex-col gap-5 max-w-sm">
           <div class="flex items-center gap-2.5">
-            <img src="/logo.png" alt="Logo" class="h-12 w-auto object-contain invert" />
+            <AppLogo class="h-12 w-auto object-contain" />
           </div>
           <p class="text-sm leading-relaxed text-gray-500">
             {{ $t('landing.footer.description') }}

@@ -115,9 +115,11 @@ const closeForgotModal = () => {
     <div class="w-full max-w-md relative z-10 animate-slide-up">
       <!-- Logo Section - same style as customer login -->
       <div class="text-center mb-8">
-        <div class="w-20 h-20 bg-white dark:bg-slate-900 rounded-[32px] shadow-xl flex items-center justify-center mx-auto mb-6 border border-slate-100 dark:border-white/5">
-          <img src="/logo.png" alt="Logo" class="w-12 h-12 object-contain" />
-        </div>
+        <NuxtLink to="/" class="inline-block hover:scale-105 transition-transform duration-300">
+          <div class="w-20 h-20 bg-white dark:bg-slate-900 rounded-[32px] shadow-xl flex items-center justify-center mx-auto mb-6 border border-slate-100 dark:border-white/5">
+            <AppLogo class="w-12 h-12 object-contain" />
+          </div>
+        </NuxtLink>
         <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white mb-2">
           {{ $t('brand.name') }} <span class="text-emerald-500">{{ $t('brand.suffix') }}</span>
         </h1>

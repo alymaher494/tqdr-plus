@@ -110,7 +110,7 @@ onUnmounted(() => {
               <div class="absolute inset-0 pt-10 bg-slate-50 flex flex-col p-4 gap-4">
                 <div class="flex items-center gap-3 mb-4">
                   <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm overflow-hidden p-1">
-                    <img src="/logo.png" alt="Logo" class="w-full h-auto" />
+                    <AppLogo class="w-full h-auto" />
                   </div>
                   <div>
                     <p class="text-[10px] font-black text-slate-900">{{ $t('landing.hero.tqdr_plus') }}</p>

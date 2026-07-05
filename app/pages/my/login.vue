@@ -67,9 +67,11 @@ const handleVerifyOTP = async () => {
 
     <div class="w-full max-w-sm relative z-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
       <div class="text-center mb-10">
-        <div class="w-20 h-20 bg-white dark:bg-slate-900 rounded-[32px] shadow-xl flex items-center justify-center mx-auto mb-6 border border-slate-100 dark:border-white/5">
-          <img src="/logo.png" alt="Logo" class="w-12 h-12 object-contain" />
-        </div>
+        <NuxtLink to="/" class="inline-block hover:scale-105 transition-transform duration-300">
+          <div class="w-20 h-20 bg-white dark:bg-slate-900 rounded-[32px] shadow-xl flex items-center justify-center mx-auto mb-6 border border-slate-100 dark:border-white/5">
+            <AppLogo class="w-12 h-12 object-contain" />
+          </div>
+        </NuxtLink>
         <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-2">{{ $t('auth.customer_otp.title') }}</h1>
         <p class="text-slate-500 dark:text-slate-400 text-sm">{{ $t('auth.customer_otp.subtitle') }}</p>
       </div>

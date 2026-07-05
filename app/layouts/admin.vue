@@ -43,8 +43,8 @@ const handleLogout = async () => {
       <div class="flex flex-col h-full">
         <!-- Sidebar Header -->
         <div class="p-6 flex items-center justify-between">
-          <NuxtLink to="/admin-dashboard" class="flex items-center">
-            <img src="/logo.png" alt="Logo" class="h-16 w-auto object-contain dark:invert" />
+          <NuxtLink to="/" class="flex items-center">
+            <AppLogo class="h-16 w-auto object-contain" />
           </NuxtLink>
           <button @click="isSidebarOpen = false" class="lg:hidden text-slate-500">
             <X class="w-6 h-6" />
