@@ -17,9 +17,8 @@ export default defineEventHandler(async (event) => {
     cleanPhone = '966' + cleanPhone
   }
 
-  // 2. Verify OTP against database (with simulation bypass for testing numbers in non-production only)
-  const isDev = process.env.NODE_ENV !== 'production';
-  const isTestNumber = isDev && (cleanPhone === '966566293256' || cleanPhone === '966500000000');
+  // 2. Verify OTP against database (with simulation bypass for specific testing numbers in any environment)
+  const isTestNumber = cleanPhone === '966566293256' || cleanPhone.startsWith('966500000');
   const isTestBypass = isTestNumber && code.toString() === '111111';
 
   if (!isTestBypass) {
