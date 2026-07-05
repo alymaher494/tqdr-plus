@@ -55,16 +55,34 @@ export default defineEventHandler(async (event) => {
       .eq('id', customer.shop_owner_id)
       .single()
 
-    // 5. Fetch Transactions (prepaid only - no offer_id for real balance moves)
+    // 5. Fetch All Transactions
     const { data: allTransactions } = await client
       .from('transactions')
-      .select('id, type, amount, paid_amount, saved_amount, balance_before, balance_after, note, offer_id, created_at, shop_owner_id, shop:profiles!transactions_shop_owner_id_fkey(shop_name)')
+      .select('id, type, amount, paid_amount, saved_amount, balance_before, balance_after, note, offer_id, created_at, shop_owner_id, shop:profiles!transactions_shop_owner_id_fkey(shop_name), offer:subscription_offers(name, duration, usage_limit)')
       .eq('customer_id', customerId)
-      .order('created_at', { ascending: false })
-      .limit(30)
+      .order('created_at', { ascending: true })
 
-    // Filter to only show prepaid transactions (deposits and withdrawals without offer_id)
-    const transactions = (allTransactions || []).filter(tx => !tx.offer_id)
+    // Calculate running count of usages for each offer
+    let runningUsages: Record<string, number> = {}
+    const enrichedTransactions = (allTransactions || []).map((tx) => {
+      if (tx.offer_id) {
+        const usageLimit = tx.offer?.usage_limit || 0
+        if (tx.type === 'withdrawal') {
+          runningUsages[tx.offer_id] = (runningUsages[tx.offer_id] || 0) + 1
+        }
+        const used = runningUsages[tx.offer_id] || 0
+        const remaining = Math.max(0, usageLimit - used)
+        return {
+          ...tx,
+          remaining_uses: remaining,
+          usage_limit: usageLimit
+        }
+      }
+      return tx
+    })
+
+    // Sort back to descending (newest first)
+    enrichedTransactions.reverse()
 
     // 6. Fetch All Subscriptions with offer details and shop name
     const { data: subscriptions } = await client
@@ -114,7 +132,7 @@ export default defineEventHandler(async (event) => {
     return {
       customer,
       shop,
-      transactions,
+      transactions: enrichedTransactions,
       subscriptions: enrichedSubscriptions
     }
   } catch (e: any) {

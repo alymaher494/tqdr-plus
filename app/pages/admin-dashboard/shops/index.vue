@@ -97,6 +97,12 @@ const handleAddShop = async () => {
       
       if (error) throw error
     } else {
+      // Validate mobile number: exactly 10 digits starting with 05
+      const phoneRegex = /^05\d{8}$/
+      if (!phoneRegex.test(form.value.mobile_number)) {
+        throw new Error(locale.value === 'ar' ? 'يجب أن يكون رقم الجوال مكوناً من 10 أرقام ويبدأ بـ 05' : 'Mobile number must be exactly 10 digits starting with 05')
+      }
+
       const loginEmail = form.value.mobile_number + '@tqdr.com'
       // 1. Create auth user and profile via backend API to prevent admin session logout
       const res: any = await $fetch('/api/admin/create-shop', {

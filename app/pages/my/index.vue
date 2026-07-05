@@ -319,13 +319,24 @@ onMounted(fetchData)
                     </td>
                     <td class="px-4 py-4">
                       <p class="font-black text-sm" :class="tx.type === 'deposit' ? 'text-emerald-500' : 'text-red-500'">
-                        {{ tx.type === 'deposit' ? '+' : '-' }}{{ tx.amount }}
-                        <span class="text-[9px] opacity-70">{{ $t('common.currency') }}</span>
+                        <template v-if="tx.offer_id && tx.type === 'withdrawal'">
+                          1 زيارة
+                        </template>
+                        <template v-else>
+                          {{ tx.type === 'deposit' ? '+' : '-' }}{{ tx.amount }}
+                          <span class="text-[9px] opacity-70">{{ $t('common.currency') }}</span>
+                        </template>
                       </p>
                     </td>
                     <td class="px-4 py-4">
-                      <p class="font-black text-slate-900 dark:text-white text-sm">
-                        {{ tx.offer_id ? 'حساب باقة' : `${tx.balance_after} ${t('common.currency')}` }}
+                      <p class="font-black text-slate-900 dark:text-white text-xs">
+                        <template v-if="tx.offer_id">
+                          <span v-if="tx.type === 'deposit'" class="text-amber-500">مدة العرض: {{ tx.offer?.duration }} يوم</span>
+                          <span v-else class="text-emerald-500">متبقي: {{ tx.remaining_uses }} زيارة</span>
+                        </template>
+                        <template v-else>
+                          {{ tx.balance_after }} {{ $t('common.currency') }}
+                        </template>
                       </p>
                     </td>
                     <td class="px-4 py-4">

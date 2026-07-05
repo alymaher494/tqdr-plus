@@ -275,6 +275,8 @@ const handleAddTransaction = async () => {
     const { error: txError } = await client.from('transactions').insert({
       ...form.value,
       shop_owner_id: currentUser.id,
+      paid_amount: form.value.type === 'deposit' ? Number(form.value.amount || 0) : 0,
+      saved_amount: savingAmount,
       balance_before,
       balance_after,
       offer_id: form.value.offer_id || null
@@ -559,7 +561,9 @@ onMounted(async () => {
                     >
                       <Plus v-if="tx.type === 'deposit'" class="w-4 h-4" />
                       <Activity v-else class="w-4 h-4" />
-                      {{ tx.type === 'deposit' ? t('transactions.types.deposit') : t('transactions.types.withdrawal') }}
+                      {{ tx.offer_id 
+                         ? (tx.type === 'deposit' ? 'شحن باقة عرض' : 'استهلاك من عرض') 
+                         : (tx.type === 'deposit' ? t('transactions.types.deposit') : t('transactions.types.withdrawal')) }}
                     </span>
                     <span v-if="tx.offer_id" class="text-[10px] text-slate-400 font-bold mt-1">
                       ({{ $t('nav.subscriptions_nav') }}: {{ offerMap[tx.offer_id] || '...' }})
@@ -571,11 +575,23 @@ onMounted(async () => {
                 </td>
                 <td class="px-8 py-5">
                   <div class="flex flex-col">
-                    <span class="text-lg font-black text-slate-900 dark:text-white">
-                      {{ tx.type === 'deposit' ? '+' : '-' }}{{ tx.amount }}
-                      <span class="text-xs font-bold opacity-50">{{ t('common.currency') }}</span>
+                    <span class="text-lg font-black" :class="tx.type === 'deposit' ? 'text-emerald-500' : 'text-red-500'">
+                      <template v-if="tx.offer_id && tx.type === 'withdrawal'">
+                        1 زيارة
+                      </template>
+                      <template v-else>
+                        {{ tx.type === 'deposit' ? '+' : '-' }}{{ tx.amount }}
+                        <span class="text-xs font-bold opacity-50">{{ t('common.currency') }}</span>
+                      </template>
                     </span>
-                    <span class="text-[10px] text-slate-400 font-bold mt-1">{{ $t('dashboard.customer_stats.balance_after', { balance: tx.balance_after }) }}</span>
+                    <span class="text-[10px] text-slate-400 font-bold mt-1">
+                      <template v-if="tx.offer_id">
+                        باقة عرض
+                      </template>
+                      <template v-else>
+                        {{ $t('dashboard.customer_stats.balance_after', { balance: tx.balance_after }) }}
+                      </template>
+                    </span>
                   </div>
                 </td>
                 <td class="px-8 py-5">

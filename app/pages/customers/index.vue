@@ -146,14 +146,28 @@ const handleAddCustomer = async () => {
     const { data: { user: currentUser } } = await client.auth.getUser()
     if (!currentUser) throw new Error(t('customers.errors.login_required'))
 
+    // Clean and validate mobile number
+    const cleanMobile = form.value.mobile_number.toString().replace(/\s+/g, '').replace(/[-\(\)]/g, '')
+    form.value.mobile_number = cleanMobile
+
+    const phoneRegex = /^05\d{8}$/
+    if (!phoneRegex.test(cleanMobile)) {
+      throw new Error(locale.value === 'ar' ? 'يجب أن يكون رقم الجوال مكوناً من 10 أرقام ويبدأ بـ 05' : 'Mobile number must be exactly 10 digits starting with 05')
+    }
+
     // 1. Create Customer
     const addedBalance = Number(form.value.added_balance || 0)
+    const paidAmount = Number(form.value.paid_amount || 0)
+    const initialSaving = form.value.offer_id 
+      ? 0 
+      : Math.max(0, addedBalance - paidAmount)
+
     const { data: customer, error: custError } = await client.from('customers').insert({
       name: form.value.name || t('dashboard.merchant_stats.new_customer'),
-      mobile_number: form.value.mobile_number,
+      mobile_number: cleanMobile,
       balance: addedBalance,
       shop_owner_id: currentUser.id,
-      total_saved: form.value.offer_id ? (availableOffers.value.find(o => o.id === form.value.offer_id)?.discount || 0) : 0
+      total_saved: initialSaving
     }).select().single()
 
 
@@ -167,6 +181,8 @@ const handleAddCustomer = async () => {
         shop_owner_id: currentUser.id,
         type: 'deposit',
         amount: addedBalance,
+        paid_amount: form.value.offer_id ? addedBalance : paidAmount,
+        saved_amount: initialSaving,
         balance_before: 0,
         balance_after: addedBalance,
         note: t('customers.opening_balance'),
@@ -263,10 +279,16 @@ const handleQuickTx = async () => {
 
     // 1. Calculate Saving
     let savingAmount = 0
-    if (txForm.value.type === 'deposit' && txForm.value.offer_id) {
-      const offer = availableOffers.value.find(o => o.id === txForm.value.offer_id)
-      if (offer) {
-        savingAmount = Number(offer.discount || 0)
+    if (txForm.value.type === 'deposit') {
+      if (txForm.value.offer_id) {
+        const offer = availableOffers.value.find(o => o.id === txForm.value.offer_id)
+        if (offer) {
+          savingAmount = Number(offer.discount || 0)
+        }
+      } else {
+        const amt = Number(txForm.value.amount || 0)
+        const paid = Number(txForm.value.paid_amount || 0)
+        savingAmount = Math.max(0, amt - paid)
       }
     } else if (txForm.value.type === 'withdrawal') {
       if (txForm.value.service_type === 'prepaid') {
@@ -313,6 +335,8 @@ const handleQuickTx = async () => {
       shop_owner_id: currentUser.id,
       type: txForm.value.type,
       amount: txForm.value.type === 'withdrawal' && txForm.value.service_type === 'offer' ? 0 : txForm.value.amount,
+      paid_amount: txForm.value.type === 'deposit' ? Number(txForm.value.paid_amount || 0) : 0,
+      saved_amount: savingAmount,
       balance_before: balanceBefore,
       balance_after: isDeposit || isPrepaidWithdrawal ? balanceAfter : balanceBefore,
       note: txForm.value.service_type === 'offer' ? `استخدام عرض: ${txForm.value.note}` : txForm.value.note,
@@ -970,16 +994,32 @@ watch(searchQuery, fetchCustomers)
                 {{ tx.type === 'deposit' ? '+' : '-' }}
               </div>
               <div>
-                <p class="font-bold text-slate-900 dark:text-white">{{ tx.type === 'deposit' ? $t('customers.deposit_new') : $t('customers.withdraw_balance') }}</p>
+                <p class="font-bold text-slate-900 dark:text-white">
+                  {{ tx.offer_id 
+                     ? (tx.type === 'deposit' ? 'شحن باقة عرض' : 'استهلاك من عرض') 
+                     : (tx.type === 'deposit' ? $t('customers.deposit_new') : $t('customers.withdraw_balance')) }}
+                </p>
                 <p class="text-[10px] text-slate-500">{{ new Date(tx.created_at).toLocaleString(locale === 'ar' ? 'ar-EG' : 'en-US') }}</p>
                 <p v-if="tx.note" class="text-xs text-slate-400 mt-1 italic">"{{ tx.note }}"</p>
               </div>
             </div>
             <div class="text-right">
               <p class="font-black text-lg" :class="tx.type === 'deposit' ? 'text-emerald-500' : 'text-red-500'">
-                {{ tx.amount }} {{ $t('common.currency') }}
+                <template v-if="tx.offer_id && tx.type === 'withdrawal'">
+                  1 زيارة
+                </template>
+                <template v-else>
+                  {{ tx.amount }} {{ $t('common.currency') }}
+                </template>
               </p>
-              <p class="text-[10px] text-slate-400">{{ $t('dashboard.customer_stats.balance_after', { balance: tx.balance_after }) }}</p>
+              <p class="text-[10px] text-slate-400">
+                <template v-if="tx.offer_id">
+                  باقة عرض
+                </template>
+                <template v-else>
+                  {{ $t('dashboard.customer_stats.balance_after', { balance: tx.balance_after }) }}
+                </template>
+              </p>
             </div>
           </div>
         </div>
