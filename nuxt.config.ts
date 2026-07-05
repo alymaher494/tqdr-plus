@@ -58,7 +58,24 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      htmlAttrs: { lang: 'ar', dir: 'rtl' },
+      title: 'تقدر بلس | نظام الولاء والدفع المقدم للمتاجر السعودية',
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+      meta: [
+        { name: 'description', content: 'تقدر بلس هو أول نظام ولاء سعودي متكامل يتيح للمتاجر تقديم خدمة الدفع مقدماً والعروض والاشتراكات لعملائها. وفّر أكثر واكسب ثقة عملائك مع تقدر بلس.' },
+        { name: 'theme-color', content: '#10b981' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:title', content: 'تقدر بلس | نظام الولاء والدفع المقدم للمتاجر السعودية' },
+        { property: 'og:description', content: 'تقدر بلس هو أول نظام ولاء سعودي متكامل يتيح للمتاجر تقديم خدمة الدفع مقدماً والعروض والاشتراكات لعملائها.' },
+        { property: 'og:locale', content: 'ar_SA' },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: 'تقدر بلس | نظام الولاء والدفع المقدم' },
+        { name: 'twitter:description', content: 'وفّر أكثر واكسب ثقة عملائك مع تقدر بلس - نظام الولاء السعودي المتكامل.' },
+        { name: 'robots', content: 'index, follow' },
+      ],
       link: [
+        { rel: 'icon', type: 'image/png', href: '/logo.png' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         {

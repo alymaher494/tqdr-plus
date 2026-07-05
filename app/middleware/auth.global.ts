@@ -1,7 +1,6 @@
 export default defineNuxtRouteMiddleware(async (to) => {
   const user = useSupabaseUser()
   const client = useSupabaseClient()
-  const config = useRuntimeConfig()
   
   // 1. On server, skip redirection for dashboard routes
   if (process.server) {
@@ -14,12 +13,10 @@ export default defineNuxtRouteMiddleware(async (to) => {
   let activeUser = user.value
 
   // 2. On client, if user is null, check if we have a supabase cookie at all
-  // This prevents premature redirection during hydration
   if (process.client && !activeUser) {
-    const hasCookie = document.cookie.includes('sb-') // Check for any supabase related cookie
+    const hasCookie = document.cookie.includes('sb-')
     
     if (hasCookie) {
-      // Wait for session to hydrate
       const { data: { session } } = await client.auth.getSession()
       if (session?.user) {
         activeUser = session.user
@@ -28,19 +25,29 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
 
   // 3. Final check for non-auth users
-  if (!activeUser && to.path !== '/login' && to.path !== '/' && !to.path.startsWith('/my')) {
+  if (!activeUser && to.path !== '/login' && to.path !== '/' && !to.path.startsWith('/my') && to.path !== '/faq') {
     return navigateTo('/login')
   }
 
-  // 4. If user exists, check their role from profiles table
+  // 4. If user exists, check their role (cached in useState to avoid repeated DB queries)
   if (activeUser && activeUser.id && String(activeUser.id) !== 'undefined') {
-    const { data: profile } = await client
-      .from('profiles')
-      .select('*')
-      .eq('id', activeUser.id)
-      .maybeSingle()
+    const cachedRole = useState<string | null>('user-role', () => null)
+    const cachedUserId = useState<string | null>('user-role-id', () => null)
+    
+    let role = cachedRole.value
 
-    const role = profile?.role
+    // Only fetch from DB if role is not cached or if the user changed
+    if (!role || cachedUserId.value !== activeUser.id) {
+      const { data: profile } = await client
+        .from('profiles')
+        .select('role')
+        .eq('id', activeUser.id)
+        .maybeSingle()
+
+      role = profile?.role || null
+      cachedRole.value = role
+      cachedUserId.value = activeUser.id
+    }
 
     // Admin Protection
     if (to.path.startsWith('/admin-dashboard') && role !== 'admin') {

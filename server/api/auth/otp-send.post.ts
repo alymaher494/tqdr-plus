@@ -17,18 +17,16 @@ export default defineEventHandler(async (event) => {
     cleanPhone = '966' + cleanPhone
   }
 
-  // 2. Check if customer exists (exact match handling spacing in DB)
+  // 2. Check if customer exists using direct indexed query
   const shortPhone = cleanPhone.startsWith('966') ? cleanPhone.substring(3) : cleanPhone
   const shortPhoneWithZero = '0' + shortPhone
 
-  const { data: allCustomers } = await client
+  const { data: customer } = await client
     .from('customers')
-    .select('id, mobile_number')
-
-  const customer = allCustomers?.find(c => {
-    const cleanDbPhone = (c.mobile_number || '').toString().replace(/\D/g, '')
-    return cleanDbPhone === cleanPhone || cleanDbPhone === shortPhone || cleanDbPhone === shortPhoneWithZero
-  })
+    .select('id')
+    .or(`mobile_number.eq.${cleanPhone},mobile_number.eq.${shortPhone},mobile_number.eq.${shortPhoneWithZero}`)
+    .limit(1)
+    .maybeSingle()
 
   if (!customer) {
     throw createError({ 
