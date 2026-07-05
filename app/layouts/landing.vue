@@ -84,8 +84,8 @@ if (import.meta.client) {
                       <Store class="w-5 h-5" />
                     </div>
                     <div>
-                      <p class="text-sm font-black text-gray-900 dark:text-white">دخول التجار</p>
-                      <p class="text-[10px] text-gray-500">إدارة متجرك وعملائك</p>
+                      <p class="text-sm font-black text-gray-900 dark:text-white">{{ $t('landing.nav.merchant_login') }}</p>
+                      <p class="text-[10px] text-gray-500">{{ $t('landing.nav.merchant_login_desc') }}</p>
                     </div>
                   </NuxtLink>
                   
@@ -98,8 +98,8 @@ if (import.meta.client) {
                       <Users class="w-5 h-5" />
                     </div>
                     <div>
-                      <p class="text-sm font-black text-gray-900 dark:text-white">دخول العملاء</p>
-                      <p class="text-[10px] text-gray-500">متابعة رصيدك وتوفيرك</p>
+                      <p class="text-sm font-black text-gray-900 dark:text-white">{{ $t('landing.nav.customer_login') }}</p>
+                      <p class="text-[10px] text-gray-500">{{ $t('landing.nav.customer_login_desc') }}</p>
                     </div>
                   </NuxtLink>
                 </div>
@@ -133,7 +133,7 @@ if (import.meta.client) {
             class="flex flex-col items-center gap-2 py-4 rounded-2xl bg-gray-50 dark:bg-white/5 text-gray-900 dark:text-white font-bold text-sm"
           >
             <Store class="w-6 h-6 text-green-500" />
-            <span>دخول التجار</span>
+            <span>{{ $t('landing.nav.merchant_login') }}</span>
           </NuxtLink>
           <NuxtLink 
             to="/my/login"
@@ -141,7 +141,7 @@ if (import.meta.client) {
             class="flex flex-col items-center gap-2 py-4 rounded-2xl bg-green-500 text-black font-bold text-sm"
           >
             <Users class="w-6 h-6" />
-            <span>دخول العملاء</span>
+            <span>{{ $t('landing.nav.customer_login') }}</span>
           </NuxtLink>
         </div>
 

@@ -38,6 +38,12 @@
     "welcome": "Welcome Back",
     "no_profile_error": "No permissions found for this account. Please contact administration.",
     "rights": "All Rights Reserved",
+    "forgot_password": "Forgot Password?",
+    "reset_password": "Reset Password",
+    "reset_email_sent": "Reset link sent successfully",
+    "back_to_login": "Back to Login",
+    "sending_reset": "Sending reset link...",
+    "reset_send_btn": "Send Reset Link",
     "customer_otp": {
       "title": "Customer Login",
       "subtitle": "Track your balance and savings in seconds",
@@ -428,7 +434,11 @@
       "faq": "FAQ",
       "contact": "Contact",
       "pricing": "Pricing",
-      "login": "Login"
+      "login": "Login",
+      "merchant_login": "Merchant Login",
+      "merchant_login_desc": "Manage your store and customers",
+      "customer_login": "Customer Login",
+      "customer_login_desc": "Track your balance and savings"
     },
     "hero": {
       "tqdr_plus": "Tqdr Plus",
