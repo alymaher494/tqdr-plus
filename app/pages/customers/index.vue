@@ -258,6 +258,11 @@ const handleAddCustomer = async () => {
 
 
 
+const selectPreset = (depositAmount: number, paidAmount: number) => {
+  txForm.value.amount = depositAmount
+  txForm.value.paid_amount = paidAmount
+}
+
 const handleQuickTx = async () => {
   try {
     loading.value = true
@@ -865,7 +870,73 @@ watch(searchQuery, fetchCustomers)
         </div>
 
         <form @submit.prevent="handleQuickTx" class="p-10 space-y-8">
-          <div class="space-y-4">
+          <!-- Interactive Input Fields based on Tx Type -->
+          <div v-if="txForm.type === 'deposit'" class="space-y-6">
+            <!-- Balance input -->
+            <div class="text-center">
+              <label class="block text-sm font-bold text-slate-500 uppercase tracking-widest mb-2">رصيد الشحن المضاف</label>
+              <input 
+                v-model="txForm.amount" 
+                type="number" 
+                required
+                autofocus
+                step="0.01" 
+                placeholder="0.00"
+                class="w-full bg-transparent border-none text-center text-5xl font-black text-slate-900 dark:text-white focus:ring-0 placeholder:text-slate-200 dark:placeholder:text-slate-800" 
+                :readonly="txForm.offer_id !== ''"
+                :class="txForm.offer_id !== '' ? 'opacity-50 cursor-not-allowed' : ''"
+              />
+            </div>
+
+            <!-- Cash Paid input (Prepaid Deposit only) -->
+            <div v-if="txForm.offer_id === ''" class="bg-slate-50 dark:bg-white/5 p-6 rounded-[28px] space-y-4 border border-slate-100 dark:border-white/5">
+              <div class="flex items-center justify-between gap-4">
+                <div class="flex-1">
+                  <label class="block text-xs font-bold text-slate-400 mb-2">المبلغ المدفوع كاش</label>
+                  <input 
+                    v-model="txForm.paid_amount" 
+                    type="number" 
+                    required
+                    step="0.01" 
+                    placeholder="0.00"
+                    class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-3 font-bold text-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" 
+                  />
+                </div>
+                <div class="text-left">
+                  <span class="block text-xs font-bold text-slate-400 mb-2">المبلغ الموفر للعميل</span>
+                  <div class="text-2xl font-black text-emerald-500 py-3">
+                    {{ Math.max(0, Number(txForm.amount || 0) - Number(txForm.paid_amount || 0)) }} {{ $t('common.currency') }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Presets -->
+              <div class="pt-2">
+                <span class="block text-xs font-bold text-slate-400 mb-3">باقات الشحن السريع المقترحة:</span>
+                <div class="grid grid-cols-2 gap-2">
+                  <button type="button" @click="selectPreset(50, 50)" class="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl text-xs font-bold hover:border-emerald-500 transition-colors flex justify-between items-center">
+                    <span>شحن 50</span>
+                    <span class="text-slate-400">تدفع 50</span>
+                  </button>
+                  <button type="button" @click="selectPreset(120, 100)" class="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-xs font-black text-emerald-600 hover:bg-emerald-500 hover:text-slate-950 transition-colors flex justify-between items-center">
+                    <span>شحن 120</span>
+                    <span>تدفع 100 🎁</span>
+                  </button>
+                  <button type="button" @click="selectPreset(250, 200)" class="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-xs font-black text-emerald-600 hover:bg-emerald-500 hover:text-slate-950 transition-colors flex justify-between items-center col-span-1">
+                    <span>شحن 250</span>
+                    <span>تدفع 200 🎁</span>
+                  </button>
+                  <button type="button" @click="selectPreset(650, 500)" class="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-xs font-black text-emerald-600 hover:bg-emerald-500 hover:text-slate-950 transition-colors flex justify-between items-center col-span-1">
+                    <span>شحن 650</span>
+                    <span>تدفع 500 🎁</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Withdrawal input -->
+          <div v-else class="space-y-4">
             <label class="text-center block text-sm font-bold text-slate-500 uppercase tracking-widest">{{ $t('transactions.amount') }}</label>
             <input 
               v-model="txForm.amount" 
@@ -875,8 +946,8 @@ watch(searchQuery, fetchCustomers)
               step="0.01" 
               placeholder="0.00"
               class="w-full bg-transparent border-none text-center text-6xl font-black text-slate-900 dark:text-white focus:ring-0 placeholder:text-slate-200 dark:placeholder:text-slate-800" 
-              :readonly="(txForm.type === 'deposit' && txForm.offer_id !== '') || (txForm.type === 'withdrawal' && txForm.service_type === 'offer')"
-              :class="((txForm.type === 'deposit' && txForm.offer_id !== '') || (txForm.type === 'withdrawal' && txForm.service_type === 'offer')) ? 'opacity-50 cursor-not-allowed' : ''"
+              :readonly="txForm.service_type === 'offer'"
+              :class="txForm.service_type === 'offer' ? 'opacity-50 cursor-not-allowed' : ''"
             />
           </div>
 

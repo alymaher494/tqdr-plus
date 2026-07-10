@@ -164,24 +164,42 @@ onMounted(fetchData)
           </button>
         </div>
 
-        <!-- Featured Savings Card (Prominent) - HOME TAB -->
-        <div v-if="currentTab === 'home'" class="bg-white/10 backdrop-blur-2xl p-8 rounded-[40px] border border-white/10 shadow-2xl relative overflow-hidden group">
-          <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <TrendingUp class="w-32 h-32 text-white -mr-8 -mt-8 rotate-12" />
-          </div>
+        <!-- Premium Digital Wallet Card - HOME TAB -->
+        <div v-if="currentTab === 'home'" class="bg-gradient-to-br from-emerald-600 via-emerald-800 to-slate-900/90 backdrop-blur-2xl p-8 rounded-[40px] border border-white/20 shadow-2xl relative overflow-hidden group">
+          <!-- Decorative Glowing Circles -->
+          <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-emerald-400/20 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-1000"></div>
+          <div class="absolute -left-10 -top-10 w-32 h-32 bg-blue-500/25 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-1000"></div>
           
-          <div class="relative z-10">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-                <TrendingUp class="w-4 h-4 text-slate-950" />
+          <div class="relative z-10 flex flex-col justify-between h-44 text-white">
+            <!-- Card Header -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <Wallet class="w-6 h-6 text-emerald-300" />
+                <span class="text-xs font-bold uppercase tracking-widest text-emerald-200">محفظة تقدر بلس</span>
               </div>
-              <p class="text-sm font-bold text-emerald-400">{{ $t('dashboard.customer_stats.total_saved') }}</p>
+              <span class="text-xs font-medium opacity-50">Tqdr Plus Wallet</span>
             </div>
-            <div class="flex items-baseline gap-2">
-              <h2 class="text-6xl font-black text-white tracking-tighter">{{ customer?.total_saved || 0 }}</h2>
-              <span class="text-2xl font-bold text-white/50">{{ $t('common.currency') }}</span>
+
+            <!-- Balance Info -->
+            <div class="my-auto">
+              <span class="text-[10px] uppercase font-bold text-emerald-200/70 block mb-1">الرصيد المتاح للإنفاق</span>
+              <div class="flex items-baseline gap-2">
+                <h2 class="text-5xl font-black tracking-tighter">{{ customer?.balance || 0 }}</h2>
+                <span class="text-lg font-bold text-emerald-300">{{ $t('common.currency') }}</span>
+              </div>
             </div>
-            <p class="text-xs text-white/40 mt-4 font-medium">{{ $t('dashboard.customer_stats.savings_desc') }}</p>
+
+            <!-- Footer: Total Savings & Customer Info -->
+            <div class="flex items-end justify-between border-t border-white/10 pt-4">
+              <div>
+                <span class="text-[9px] uppercase font-bold text-white/50 block mb-0.5">إجمالي المبلغ الموفر</span>
+                <span class="font-black text-sm text-emerald-300">{{ customer?.total_saved || 0 }} {{ $t('common.currency') }}</span>
+              </div>
+              <div class="text-right">
+                <span class="text-[9px] uppercase font-bold text-white/50 block mb-0.5">رقم العضوية</span>
+                <span class="font-bold text-xs tracking-wider opacity-90">#{{ customer?.mobile_number?.slice(-4) || '0000' }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -189,22 +207,7 @@ onMounted(fetchData)
       <div class="px-6 -mt-8 space-y-8">
         <!-- HOME TAB -->
         <template v-if="currentTab === 'home'">
-          <!-- Balance Card -->
-          <div class="bg-white dark:bg-slate-900 p-8 rounded-[40px] shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-white/5 flex items-center justify-between group hover:scale-[1.02] transition-all duration-500">
-            <div>
-              <div class="flex items-center gap-2 mb-2 text-slate-400">
-                <Wallet class="w-4 h-4" />
-                <p class="text-xs font-black uppercase tracking-widest">{{ $t('dashboard.customer_stats.current_balance') }}</p>
-              </div>
-              <div class="flex items-baseline gap-2">
-                <h3 class="text-5xl font-black text-emerald-500 tracking-tighter">{{ customer?.balance }}</h3>
-                <span class="text-xl font-bold text-slate-300">{{ $t('common.currency') }}</span>
-              </div>
-            </div>
-            <div class="w-20 h-20 bg-emerald-500/10 rounded-[32px] flex items-center justify-center text-emerald-500 group-hover:rotate-12 transition-transform duration-500">
-              <Wallet class="w-10 h-10" />
-            </div>
-          </div>
+
 
           <!-- Shop Info -->
           <div class="bg-slate-100 dark:bg-white/5 p-6 rounded-[32px] flex items-center justify-between border border-transparent hover:border-emerald-500/20 transition-all">
