@@ -383,6 +383,7 @@
     },
     "sms": {
       "welcome": "أهلاً بك في {shop}! تم تفعيل حسابك بنجاح برصيد {balance} ر.س.",
+      "deposit_success": "تم شحن رصيدك بنجاح بمبلغ {amount} ر.س لدى {shop} رصيدك الحالي {balance} ر.س.",
       "savings_info": " لقد وفرت {discount} ر.س من خلال اشتراكك في ({offer}).",
       "footer": " إجمالي توفيرك معنا هو {total} ر.س. تابع رصيدك عبر: tqdr.me/my",
       "subscription_success": "مرحباً بك، تم الاشتراك في عرض {offer} لدى {shop} بمبلغ {price} ر.س لعدد {uses} مرات، مدة العرض {duration} يوم.",

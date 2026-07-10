@@ -397,7 +397,7 @@ const handleQuickTx = async () => {
             })
           }
         } else {
-          smsMessage = t('customers.sms.welcome', { shop: shopName, balance: balanceAfter })
+          smsMessage = t('customers.sms.deposit_success', { shop: shopName, amount: txForm.value.amount, balance: balanceAfter })
         }
       } else if (txForm.value.type === 'withdrawal' && txForm.value.service_type === 'prepaid') {
         // Prepaid withdrawal: deduction message with savings

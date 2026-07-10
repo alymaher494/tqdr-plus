@@ -379,6 +379,7 @@
     },
     "sms": {
       "welcome": "Welcome to {shop}! Your account has been successfully activated with a balance of {balance} SAR.",
+      "deposit_success": "Your balance was successfully recharged with {amount} SAR at {shop}. Your current balance is {balance} SAR.",
       "savings_info": " You saved {discount} SAR through your subscription in ({offer}).",
       "footer": " Your total savings with us is {total} SAR. Track your balance at: tqdr.me/my",
       "subscription_success": "Welcome! You have successfully subscribed to {offer} at {shop} for {price} SAR with {uses} uses. Duration: {duration} days.",

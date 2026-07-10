@@ -343,7 +343,7 @@ const handleAddTransaction = async () => {
               })
             }
           } else {
-            smsMessage = t('customers.sms.welcome', { shop: shopName, balance: balance_after }) + 
+            smsMessage = t('customers.sms.deposit_success', { shop: shopName, amount: form.value.amount, balance: balance_after }) + 
                          t('customers.sms.footer', { total: newTotalSaved })
           }
         } else {
