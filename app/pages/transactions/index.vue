@@ -16,7 +16,8 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  ChevronDown
+  ChevronDown,
+  Activity
 } from 'lucide-vue-next'
 
 
@@ -266,8 +267,14 @@ const handleAddTransaction = async () => {
         .maybeSingle()
       
       if (lastDeposit && Number(lastDeposit.amount) > 0) {
-        const ratio = (Number(lastDeposit.amount) - Number(lastDeposit.paid_amount)) / Number(lastDeposit.amount)
-        savingAmount = Number((Number(form.value.amount) * ratio).toFixed(2))
+        const amt = Number(lastDeposit.amount)
+        const paid = Number(lastDeposit.paid_amount || 0)
+        if (paid > 0 && paid < amt) {
+          const ratio = (amt - paid) / amt
+          savingAmount = Number((Number(form.value.amount) * ratio).toFixed(2))
+        } else {
+          savingAmount = 0
+        }
       }
     }
 

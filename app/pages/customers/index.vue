@@ -18,7 +18,9 @@ import {
   User,
   Smartphone,
   Save,
-  DollarSign
+  DollarSign,
+  Sparkles,
+  AlertCircle
 } from 'lucide-vue-next'
 
 
@@ -44,6 +46,7 @@ const showDeleteModal = ref(false)
 const customerToDelete = ref(null)
 const showErrorModal = ref(false)
 const errorMsg = ref('')
+const showEditModal = ref(false)
 
 const isSuspended = computed(() => profile.value?.status === 'suspended')
 
@@ -309,8 +312,14 @@ const handleQuickTx = async () => {
           .maybeSingle()
         
         if (lastDeposit && Number(lastDeposit.amount) > 0) {
-          const ratio = (Number(lastDeposit.amount) - Number(lastDeposit.paid_amount)) / Number(lastDeposit.amount)
-          savingAmount = Number((Number(txForm.value.amount) * ratio).toFixed(2))
+          const amt = Number(lastDeposit.amount)
+          const paid = Number(lastDeposit.paid_amount || 0)
+          if (paid > 0 && paid < amt) {
+            const ratio = (amt - paid) / amt
+            savingAmount = Number((Number(txForm.value.amount) * ratio).toFixed(2))
+          } else {
+            savingAmount = 0
+          }
         }
       } else if (txForm.value.service_type === 'offer') {
         const offer = availableOffers.value.find(o => o.id === txForm.value.offer_id)
@@ -757,7 +766,7 @@ watch(searchQuery, fetchCustomers)
     <!-- Modal: Add New Customer -->
     <div v-if="showAddModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" @click="showAddModal = false"></div>
-      <div class="relative bg-white dark:bg-slate-900 w-full max-w-xl rounded-[40px] shadow-2xl border border-white/10 overflow-hidden animate-in fade-in zoom-in duration-300">
+      <div class="relative bg-white dark:bg-slate-900 w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[40px] shadow-2xl border border-white/10 custom-scrollbar animate-in fade-in zoom-in duration-300">
         <div class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-gradient-to-r from-emerald-500/10 to-transparent">
           <div class="flex items-center gap-4">
             <div class="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/20">
@@ -853,7 +862,7 @@ watch(searchQuery, fetchCustomers)
     <!-- Modal: Quick Transaction (Deposit/Withdrawal) -->
     <div v-if="showTxModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" @click="showTxModal = false"></div>
-      <div class="relative bg-white dark:bg-slate-900 w-full max-w-lg rounded-[40px] shadow-2xl border border-white/10 overflow-hidden animate-in fade-in zoom-in duration-300">
+      <div class="relative bg-white dark:bg-slate-900 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[40px] shadow-2xl border border-white/10 custom-scrollbar animate-in fade-in zoom-in duration-300">
         <div class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between" :class="txForm.type === 'deposit' ? 'bg-emerald-500/10' : 'bg-red-500/10'">
           <div class="flex items-center gap-4">
             <div :class="txForm.type === 'deposit' ? 'bg-emerald-500' : 'bg-red-500'" class="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg">

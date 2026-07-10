@@ -392,7 +392,7 @@ onMounted(() => {
     <!-- Modal -->
     <div v-if="showModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div @click="showModal = false" class="absolute inset-0 bg-slate-950/40 backdrop-blur-sm"></div>
-      <BaseCard class="w-full max-w-lg relative z-10 animate-slide-up !p-8 rounded-[40px]">
+      <BaseCard class="w-full max-w-lg max-h-[90vh] overflow-y-auto custom-scrollbar relative z-10 animate-slide-up !p-8 rounded-[40px]">
         <div class="flex items-center justify-between mb-8">
           <h3 class="text-2xl font-black text-slate-900 dark:text-white">
             {{ editingOffer ? $t('subscriptions.edit_offer') : $t('subscriptions.add_offer') }}
@@ -477,7 +477,7 @@ onMounted(() => {
     <!-- Modal: Manage Subscribers -->
     <div v-if="showCustomerModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div @click="showCustomerModal = false" class="absolute inset-0 bg-slate-950/40 backdrop-blur-sm"></div>
-      <BaseCard class="w-full max-w-2xl relative z-10 animate-slide-up !p-0 rounded-[40px] overflow-hidden">
+      <BaseCard class="w-full max-w-2xl max-h-[90vh] overflow-y-auto custom-scrollbar relative z-10 animate-slide-up !p-0 rounded-[40px]">
         <div class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-emerald-500/5">
           <div class="flex items-center gap-4">
             <div class="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/20">
