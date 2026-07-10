@@ -38,6 +38,12 @@
     "welcome": "Welcome Back",
     "no_profile_error": "No permissions found for this account. Please contact administration.",
     "rights": "All Rights Reserved",
+    "forgot_password": "Forgot Password?",
+    "reset_password": "Reset Password",
+    "reset_email_sent": "Reset link sent successfully",
+    "back_to_login": "Back to Login",
+    "sending_reset": "Sending reset link...",
+    "reset_send_btn": "Send Reset Link",
     "customer_otp": {
       "title": "Customer Login",
       "subtitle": "Track your balance and savings in seconds",
@@ -284,8 +290,6 @@
     },
     "customer_stats": {
       "welcome_back": "Welcome back",
-      "remaining_uses": "Remaining Uses",
-      "remaining_days": "Remaining Days",
       "total_saved": "Total you saved with Tqdr Plus",
       "savings_desc": "Total savings you got from prepayment service.",
       "current_balance": "Current Balance",
@@ -377,13 +381,13 @@
       "welcome": "Welcome to {shop}! Your account has been successfully activated with a balance of {balance} SAR.",
       "savings_info": " You saved {discount} SAR through your subscription in ({offer}).",
       "footer": " Your total savings with us is {total} SAR. Track your balance at: tqdr.me/my",
-      "subscription_success": "Welcome! You have successfully subscribed to ({offer}) at ({shop}) for {price} SAR with {uses} uses. Duration: {duration} days.",
-      "subscription_activated": "Welcome! You have successfully subscribed to ({offer}) at ({shop}) for {price} SAR with {uses} uses. Duration: {duration} days.",
-      "subscription_success_simple": "Welcome! You have subscribed to ({offer}) at ({shop}) for {price} SAR with {uses} uses. Duration: {duration} days.",
+      "subscription_success": "Welcome! You have successfully subscribed to {offer} at {shop} for {price} SAR with {uses} uses. Duration: {duration} days.",
+      "subscription_activated": "Welcome! You have successfully subscribed to {offer} at {shop} for {price} SAR with {uses} uses. Duration: {duration} days.",
+      "subscription_success_simple": "Welcome! You have subscribed to {offer} at {shop} for {price} SAR with {uses} uses. Duration: {duration} days.",
       "withdrawal_success": "SAR {amount} has been deducted from your balance at {shop}. Current balance: {balance} SAR. Your total savings is {total} SAR.",
       "withdrawal_success_no_savings": "SAR {amount} has been deducted from your balance at {shop}. Current balance: {balance} SAR",
       "withdrawal_success_saved": "SAR {amount} has been deducted from your balance at {shop}. Current balance: {balance} SAR. Amount saved in this transaction: {savings} SAR. Your total savings is {total} SAR!",
-      "offer_used": "Welcome! You have used ({offer}) at ({shop}). Remaining uses: {remaining}. Days left: {days}."
+      "offer_used": "Welcome! You have used {offer} at {shop}. Remaining uses: {remaining}. Days left: {days}."
     },
     "withdrawal_type_title": "Withdrawal Type",
     "withdrawal_type_prepaid": "General Balance Deduction",
@@ -430,7 +434,11 @@
       "faq": "FAQ",
       "contact": "Contact",
       "pricing": "Pricing",
-      "login": "Login"
+      "login": "Login",
+      "merchant_login": "Merchant Login",
+      "merchant_login_desc": "Manage your store and customers",
+      "customer_login": "Customer Login",
+      "customer_login_desc": "Track your balance and savings"
     },
     "hero": {
       "tqdr_plus": "Tqdr Plus",

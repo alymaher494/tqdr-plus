@@ -292,18 +292,20 @@ const handleQuickTx = async () => {
       }
     } else if (txForm.value.type === 'withdrawal') {
       if (txForm.value.service_type === 'prepaid') {
-        // Check if customer has an active subscription for discount calculation
-        const { data: activeSubs } = await client
-          .from('customer_subscriptions')
-          .select('*, offer:subscription_offers(*)')
+        // Calculate saving ratio from the last prepaid deposit
+        const { data: lastDeposit } = await client
+          .from('transactions')
+          .select('amount, paid_amount, saved_amount')
           .eq('customer_id', customer.id)
-          .eq('status', 'active')
-          .gte('expires_at', new Date().toISOString())
+          .eq('type', 'deposit')
+          .is('offer_id', null)
+          .order('created_at', { ascending: false })
           .limit(1)
+          .maybeSingle()
         
-        const activeSub = activeSubs?.[0]
-        if (activeSub && activeSub.offer) {
-          savingAmount = Number(activeSub.offer.discount || 0)
+        if (lastDeposit && Number(lastDeposit.amount) > 0) {
+          const ratio = (Number(lastDeposit.amount) - Number(lastDeposit.paid_amount)) / Number(lastDeposit.amount)
+          savingAmount = Number((Number(txForm.value.amount) * ratio).toFixed(2))
         }
       } else if (txForm.value.service_type === 'offer') {
         const offer = availableOffers.value.find(o => o.id === txForm.value.offer_id)

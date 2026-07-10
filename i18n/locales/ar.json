@@ -40,6 +40,12 @@
     "welcome": "مرحباً بك مجدداً",
     "no_profile_error": "لم يتم العثور على صلاحيات لهذا الحساب. يرجى التواصل مع الإدارة.",
     "rights": "جميع الحقوق محفوظة",
+    "forgot_password": "نسيت كلمة المرور؟",
+    "reset_password": "إعادة تعيين كلمة المرور",
+    "reset_email_sent": "تم إرسال رابط إعادة التعيين بنجاح",
+    "back_to_login": "العودة لتسجيل الدخول",
+    "sending_reset": "جاري إرسال الرابط...",
+    "reset_send_btn": "إرسال رابط إعادة التعيين",
     "customer_otp": {
       "title": "دخول العملاء",
       "subtitle": "تابع رصيدك وتوفيرك في ثوانٍ",
@@ -286,8 +292,6 @@
     },
     "customer_stats": {
       "welcome_back": "أهلاً بك مجدداً",
-      "remaining_uses": "الاستخدامات المتبقية",
-      "remaining_days": "الأيام المتبقية",
       "total_saved": "إجمالي ما وفرته مع تقدر بلس",
       "savings_desc": "مجموع الأموال التي وفرتها من خدمة الدفع مقدماً.",
       "current_balance": "رصيدك الحالي",
@@ -310,6 +314,8 @@
       "offers": "العروض",
       "welcome_guest": "أهلاً بك، عميلنا المميز",
       "last_deposit": "آخر شحن",
+      "remaining_uses": "المرات المتبقية",
+      "remaining_days": "الأيام المتبقية",
       "request_deposit": "طلب شحن",
       "your_transactions": "سجل عملياتك",
       "filter": "تصفية",
@@ -379,13 +385,13 @@
       "welcome": "أهلاً بك في {shop}! تم تفعيل حسابك بنجاح برصيد {balance} ر.س.",
       "savings_info": " لقد وفرت {discount} ر.س من خلال اشتراكك في ({offer}).",
       "footer": " إجمالي توفيرك معنا هو {total} ر.س. تابع رصيدك عبر: tqdr.me/my",
-      "subscription_success": "مرحباً بك، تم الاشتراك في ({offer}) لدى ({shop}) بمبلغ {price} ر.س لعدد {uses} مرات، مدة العرض {duration} يوم.",
-      "subscription_activated": "مرحباً بك، تم الاشتراك في ({offer}) لدى ({shop}) بمبلغ {price} ر.س لعدد {uses} مرات، مدة العرض {duration} يوم.",
-      "subscription_success_simple": "مرحباً بك، تم الاشتراك في ({offer}) لدى ({shop}) بمبلغ {price} ر.س لعدد {uses} مرات، مدة العرض {duration} يوم.",
+      "subscription_success": "مرحباً بك، تم الاشتراك في عرض {offer} لدى {shop} بمبلغ {price} ر.س لعدد {uses} مرات، مدة العرض {duration} يوم.",
+      "subscription_activated": "مرحباً بك، تم الاشتراك في عرض {offer} لدى {shop} بمبلغ {price} ر.س لعدد {uses} مرات، مدة العرض {duration} يوم.",
+      "subscription_success_simple": "مرحباً بك، تم الاشتراك في عرض {offer} لدى {shop} بمبلغ {price} ر.س لعدد {uses} مرات، مدة العرض {duration} يوم.",
       "withdrawal_success": "تم خصم {amount} ر.س من رصيدك عند {shop} رصيدك الحالي {balance} ر.س. إجمالي ما وفرته هو {total} ر.س.",
       "withdrawal_success_no_savings": "تم خصم {amount} ر.س من رصيدك عند {shop} رصيدك الحالي {balance} ر.س",
       "withdrawal_success_saved": "تم خصم {amount} ر.س من رصيدك عند {shop} رصيدك الحالي {balance} ر.س المبلغ الموفر من هذه العملية {savings} ر.س",
-      "offer_used": "مرحباً بك، تم الاستفادة من ({offer}) لدى ({shop}) عدد المرات المتبقي {remaining} مرات، باقي على العرض {days} أيام."
+      "offer_used": "مرحباً بك، تم الاستفادة من عرض {offer} لدى {shop} عدد المرات المتبقي {remaining} مرات، باقي على العرض {days} أيام."
     },
     "withdrawal_type_title": "نوع عملية الخصم",
     "withdrawal_type_prepaid": "خصم من الرصيد العام",
@@ -432,7 +438,11 @@
       "faq": "الأسئلة",
       "contact": "تواصل معنا",
       "pricing": "الباقات",
-      "login": "تسجيل الدخول"
+      "login": "تسجيل الدخول",
+      "merchant_login": "دخول التجار",
+      "merchant_login_desc": "إدارة متجرك وعملائك",
+      "customer_login": "دخول العملاء",
+      "customer_login_desc": "متابعة رصيدك وتوفيرك"
     },
     "hero": {
       "tqdr_plus": "تقدر Plus",

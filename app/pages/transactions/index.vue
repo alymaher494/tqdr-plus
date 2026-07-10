@@ -254,18 +254,20 @@ const handleAddTransaction = async () => {
         savingAmount = Number(offer.discount || 0)
       }
     } else if (form.value.type === 'withdrawal') {
-      // Check if customer has an active subscription
-      const { data: activeSubs } = await client
-        .from('customer_subscriptions')
-        .select('*, offer:subscription_offers(*)')
+      // Calculate saving ratio from the last prepaid deposit
+      const { data: lastDeposit } = await client
+        .from('transactions')
+        .select('amount, paid_amount, saved_amount')
         .eq('customer_id', customer.id)
-        .eq('status', 'active')
-        .gte('expires_at', new Date().toISOString())
+        .eq('type', 'deposit')
+        .is('offer_id', null)
+        .order('created_at', { ascending: false })
         .limit(1)
+        .maybeSingle()
       
-      const activeSub = activeSubs?.[0]
-      if (activeSub && activeSub.offer) {
-        savingAmount = Number(activeSub.offer.discount || 0)
+      if (lastDeposit && Number(lastDeposit.amount) > 0) {
+        const ratio = (Number(lastDeposit.amount) - Number(lastDeposit.paid_amount)) / Number(lastDeposit.amount)
+        savingAmount = Number((Number(form.value.amount) * ratio).toFixed(2))
       }
     }
 

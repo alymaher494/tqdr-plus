@@ -37,6 +37,7 @@ const displayStats = ref([
 ])
 
 const recentShops = ref([])
+const shopsPerformance = ref([])
 const loading = ref(true)
 
 const dateFilter = ref('all') // today, week, month, custom, all
