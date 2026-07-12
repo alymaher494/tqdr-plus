@@ -879,8 +879,47 @@ watch(searchQuery, fetchCustomers)
         </div>
 
         <form @submit.prevent="handleQuickTx" class="p-10 space-y-8">
-          <!-- Simple Amount Input for Deposit/Withdrawal -->
-          <div class="space-y-4">
+          <!-- Interactive Input Fields based on Tx Type -->
+          <div v-if="txForm.type === 'deposit' && txForm.offer_id === ''" class="space-y-6">
+            <!-- Amount to Add (الرصيد المضاف) & Cash Paid (المبلغ المدفوع كاش) -->
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-500">الرصيد المضاف</label>
+                <input 
+                  v-model="txForm.amount" 
+                  type="number" 
+                  required
+                  autofocus
+                  step="0.01" 
+                  placeholder="0.00"
+                  class="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 font-black text-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" 
+                />
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-500">المبلغ المدفوع كاش</label>
+                <input 
+                  v-model="txForm.paid_amount" 
+                  type="number" 
+                  required
+                  step="0.01" 
+                  placeholder="0.00"
+                  class="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 font-black text-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" 
+                />
+              </div>
+            </div>
+
+            <!-- Savings Feedback -->
+            <div class="bg-emerald-500/5 border border-emerald-500/10 p-4 rounded-2xl flex items-center justify-between">
+              <span class="text-sm font-bold text-slate-500 dark:text-slate-400">المبلغ الموفر للعميل:</span>
+              <span class="text-xl font-black text-emerald-500">
+                {{ Math.max(0, Number(txForm.amount || 0) - Number(txForm.paid_amount || 0)) }} {{ $t('common.currency') }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Simple Amount Input for Withdrawal / Offer Deposit -->
+          <div v-else class="space-y-4">
             <label class="text-center block text-sm font-bold text-slate-500 uppercase tracking-widest">{{ $t('transactions.amount') }}</label>
             <input 
               v-model="txForm.amount" 
