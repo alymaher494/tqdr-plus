@@ -20,7 +20,8 @@ import {
   Save,
   DollarSign,
   Sparkles,
-  AlertCircle
+  AlertCircle,
+  CheckCircle2
 } from 'lucide-vue-next'
 
 
@@ -47,6 +48,7 @@ const customerToDelete = ref(null)
 const showErrorModal = ref(false)
 const errorMsg = ref('')
 const showEditModal = ref(false)
+const txSuccess = ref(false)
 
 const isSuspended = computed(() => profile.value?.status === 'suspended')
 
@@ -359,8 +361,8 @@ const handleQuickTx = async () => {
       offer_id: (txForm.value.type === 'deposit' && txForm.value.offer_id) ? txForm.value.offer_id : (txForm.value.service_type === 'offer' ? txForm.value.offer_id || null : null)
     })
     if (txError) throw txError
-
-    showTxModal.value = false
+    
+    txSuccess.value = true
     
     // 4. Handle Subscription (if selected during deposit)
     if (txForm.value.type === 'deposit' && txForm.value.offer_id) {
@@ -451,9 +453,14 @@ const handleQuickTx = async () => {
       console.error('Failed to send transaction SMS:', smsErr)
     }
 
-    showTxModal.value = false
-    txForm.value = { type: 'deposit', amount: '' as any, paid_amount: '' as any, saved_amount: '' as any, note: '', offer_id: '', service_type: 'prepaid' }
+    txSuccess.value = true
     await fetchCustomers()
+
+    setTimeout(() => {
+      showTxModal.value = false
+      txSuccess.value = false
+      txForm.value = { type: 'deposit', amount: '' as any, paid_amount: '' as any, saved_amount: '' as any, note: '', offer_id: '', service_type: 'prepaid' }
+    }, 1500)
 
   } catch (e: any) {
     errorMsg.value = e.message
@@ -863,7 +870,23 @@ watch(searchQuery, fetchCustomers)
     <div v-if="showTxModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" @click="showTxModal = false"></div>
       <div class="relative bg-white dark:bg-slate-900 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[40px] shadow-2xl border border-white/10 custom-scrollbar animate-in fade-in zoom-in duration-300">
-        <div class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between" :class="txForm.type === 'deposit' ? 'bg-emerald-500/10' : 'bg-red-500/10'">
+        
+        <!-- Transaction Success Screen -->
+        <div v-if="txSuccess" class="p-16 text-center space-y-6 animate-in fade-in zoom-in duration-300">
+          <div class="w-24 h-24 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mx-auto ring-8 ring-emerald-500/5">
+            <CheckCircle2 class="w-12 h-12 animate-bounce" />
+          </div>
+          <div class="space-y-2">
+            <h3 class="text-3xl font-black text-slate-900 dark:text-white">
+              {{ txForm.type === 'deposit' ? 'تم الشحن بنجاح' : 'تم الخصم بنجاح' }}
+            </h3>
+            <p class="text-slate-500 dark:text-slate-400">تم تنفيذ العملية وتحديث حساب العميل بنجاح.</p>
+          </div>
+        </div>
+
+        <!-- Normal Form Mode -->
+        <div v-else>
+          <div class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between" :class="txForm.type === 'deposit' ? 'bg-emerald-500/10' : 'bg-red-500/10'">
           <div class="flex items-center gap-4">
             <div :class="txForm.type === 'deposit' ? 'bg-emerald-500' : 'bg-red-500'" class="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg">
               <component :is="txForm.type === 'deposit' ? ArrowUpCircle : ArrowDownCircle" class="w-6 h-6" />

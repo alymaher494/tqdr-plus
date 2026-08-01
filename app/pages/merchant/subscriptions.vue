@@ -62,15 +62,50 @@ const fetchOffers = async () => {
   try {
     loading.value = true
     console.log('Fetching offers for:', userId)
-    const { data, error } = await client
+    const { data: offersData, error } = await client
       .from('subscription_offers')
       .select('*')
       .eq('shop_owner_id', userId)
       .order('created_at', { ascending: false })
     
     if (error) throw error
-    console.log('Offers fetched successfully:', data)
-    offers.value = data || []
+
+    // Fetch active subscriber count and remaining days per offer
+    const enrichedOffers = []
+    if (offersData) {
+      for (const offer of offersData) {
+        const { count, error: countError } = await client
+          .from('customer_subscriptions')
+          .select('*', { count: 'exact', head: true })
+          .eq('offer_id', offer.id)
+          .eq('status', 'active')
+          .gte('expires_at', new Date().toISOString())
+
+        if (countError) console.error(countError)
+
+        const { data: maxSub } = await client
+          .from('customer_subscriptions')
+          .select('expires_at')
+          .eq('offer_id', offer.id)
+          .eq('status', 'active')
+          .gte('expires_at', new Date().toISOString())
+          .order('expires_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+
+        const maxRemainingDays = maxSub
+          ? Math.max(0, Math.ceil((new Date(maxSub.expires_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))
+          : 0
+
+        enrichedOffers.push({
+          ...offer,
+          active_subscribers_count: count || 0,
+          max_remaining_days: maxRemainingDays
+        })
+      }
+    }
+
+    offers.value = enrichedOffers
   } catch (e: any) {
     console.error('Error fetching offers:', e)
   } finally {
@@ -155,9 +190,47 @@ const confirmDelete = async () => {
 }
 
 
-const handleDelete = (offer: any) => {
-  offerToDelete.value = offer
-  showDeleteModal.value = true
+const handleDelete = async (offer: any) => {
+  try {
+    loading.value = true
+    const { data: activeSubs, error } = await client
+      .from('customer_subscriptions')
+      .select('id, expires_at')
+      .eq('offer_id', offer.id)
+      .eq('status', 'active')
+      .gte('expires_at', new Date().toISOString())
+      .limit(1)
+
+    if (error) throw error
+
+    if (activeSubs && activeSubs.length > 0) {
+      const { data: furthestSub } = await client
+        .from('customer_subscriptions')
+        .select('expires_at')
+        .eq('offer_id', offer.id)
+        .eq('status', 'active')
+        .gte('expires_at', new Date().toISOString())
+        .order('expires_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      const daysRemaining = furthestSub 
+        ? Math.ceil((new Date(furthestSub.expires_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+        : 30
+
+      errorMsg.value = `لا يمكن حذف هذا العرض لوجود مشتركين نشطين حالياً. آخر اشتراك ينتهي بعد ${daysRemaining} يوم.`
+      showErrorModal.value = true
+      return
+    }
+
+    offerToDelete.value = offer
+    showDeleteModal.value = true
+  } catch (e: any) {
+    errorMsg.value = e.message
+    showErrorModal.value = true
+  } finally {
+    loading.value = false
+  }
 }
 
 
@@ -348,12 +421,20 @@ onMounted(() => {
           
           <div class="space-y-3 mb-6">
             <div class="flex items-center gap-2 text-sm text-slate-500">
-              <Clock class="w-4 h-4" />
+              <Clock class="w-4 h-4 text-emerald-500" />
               <span>{{ $t('subscriptions.duration_days', { days: offer.duration }) }}</span>
             </div>
             <div class="flex items-center gap-2 text-sm text-slate-500">
-              <CheckCircle2 class="w-4 h-4" />
+              <CheckCircle2 class="w-4 h-4 text-emerald-500" />
               <span>{{ $t('subscriptions.usage_times', { count: offer.usage_limit }) }}</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-slate-500 border-t border-slate-100 dark:border-white/5 pt-2">
+              <Users class="w-4 h-4 text-amber-500" />
+              <span>المشتركين النشطين: <strong class="text-slate-900 dark:text-white">{{ offer.active_subscribers_count || 0 }} مشترك</strong></span>
+            </div>
+            <div v-if="offer.active_subscribers_count > 0" class="flex items-center gap-2 text-sm text-slate-500">
+              <Clock class="w-4 h-4 text-amber-500" />
+              <span>أقصى صلاحية متبقية: <strong class="text-slate-900 dark:text-white">{{ offer.max_remaining_days }} يوم</strong></span>
             </div>
           </div>
 
