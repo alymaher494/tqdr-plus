@@ -32,7 +32,7 @@ const form = ref({
   name: '',
   price: '',
   usage_limit: '',
-  discount: '',
+  discount: '0',
   duration: 30
 })
 
@@ -88,7 +88,7 @@ const handleSubmit = async () => {
       name: form.value.name,
       price: parseFloat(form.value.price),
       usage_limit: parseInt(form.value.usage_limit),
-      discount: parseFloat(form.value.discount),
+      discount: 0,
       duration: parseInt(form.value.duration),
       shop_owner_id: authUser.id
     }
@@ -110,7 +110,7 @@ const handleSubmit = async () => {
 
     showModal.value = false
     editingOffer.value = null
-    form.value = { name: '', price: '', usage_limit: '', discount: '', duration: 30 }
+    form.value = { name: '', price: '', usage_limit: '', discount: '0', duration: 30 }
     await fetchOffers()
   } catch (e: any) {
     errorMsg.value = e.message
@@ -127,7 +127,7 @@ const handleEdit = (offer: any) => {
     name: offer.name,
     price: offer.price.toString(),
     usage_limit: offer.usage_limit.toString(),
-    discount: offer.discount.toString(),
+    discount: '0',
     duration: offer.duration
   }
   showModal.value = true
@@ -357,15 +357,9 @@ onMounted(() => {
             </div>
           </div>
 
-          <div class="flex items-end justify-between p-4 bg-slate-50 dark:bg-white/5 rounded-2xl">
-            <div>
-              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ $t('subscriptions.price') }}</p>
-              <p class="text-2xl font-black text-emerald-500">{{ offer.price }} <span class="text-xs">{{ $t('common.currency') }}</span></p>
-            </div>
-            <div class="text-right">
-              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ $t('subscriptions.discount') }}</p>
-              <p class="text-lg font-bold text-amber-500">{{ offer.discount }} <span class="text-xs">{{ $t('common.currency') }}</span></p>
-            </div>
+          <div class="p-4 bg-slate-50 dark:bg-white/5 rounded-2xl">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ $t('subscriptions.price') }}</p>
+            <p class="text-2xl font-black text-emerald-500">{{ offer.price }} <span class="text-xs">{{ $t('common.currency') }}</span></p>
           </div>
         </div>
       </BaseCard>
@@ -414,27 +408,15 @@ onMounted(() => {
             />
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-slate-700 dark:text-slate-300 text-sm font-bold mb-2">{{ $t('subscriptions.price') }}</label>
-              <input 
-                v-model="form.price"
-                type="number" 
-                required
-                class="w-full bg-slate-100 dark:bg-white/5 border-none rounded-2xl px-5 py-4 text-slate-900 dark:text-white"
-                placeholder="100"
-              />
-            </div>
-            <div>
-              <label class="block text-slate-700 dark:text-slate-300 text-sm font-bold mb-2">{{ $t('subscriptions.discount') }}</label>
-              <input 
-                v-model="form.discount"
-                type="number" 
-                required
-                class="w-full bg-slate-100 dark:bg-white/5 border-none rounded-2xl px-5 py-4 text-slate-900 dark:text-white"
-                placeholder="10"
-              />
-            </div>
+          <div>
+            <label class="block text-slate-700 dark:text-slate-300 text-sm font-bold mb-2">{{ $t('subscriptions.price') }}</label>
+            <input 
+              v-model="form.price"
+              type="number" 
+              required
+              class="w-full bg-slate-100 dark:bg-white/5 border-none rounded-2xl px-5 py-4 text-slate-900 dark:text-white"
+              placeholder="10"
+            />
           </div>
 
           <div class="grid grid-cols-2 gap-4">

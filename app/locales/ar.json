@@ -382,17 +382,17 @@
       "select_offer_first": "يرجى اختيار عرض شحن أولاً"
     },
     "sms": {
-      "welcome": "أهلاً بك في {shop}! تم تفعيل حسابك بنجاح برصيد {balance} ر.س.",
-      "deposit_success": "تم شحن رصيدك بنجاح بمبلغ {amount} ر.س لدى {shop} رصيدك الحالي {balance} ر.س.",
+      "welcome": "أهلاً بك في {shop}! تم تفعيل حسابك بنجاح برصيد {balance} ر.س. لمتابعة رصيدك: https://tqdrplus.sa/my",
+      "deposit_success": "تم شحن رصيدك بنجاح بمبلغ {amount} ر.س لدى {shop} رصيدك الحالي {balance} ر.س. لمتابعة رصيدك: https://tqdrplus.sa/my",
       "savings_info": " لقد وفرت {discount} ر.س من خلال اشتراكك في ({offer}).",
-      "footer": " إجمالي توفيرك معنا هو {total} ر.س. تابع رصيدك عبر: tqdr.me/my",
-      "subscription_success": "مرحباً بك، تم الاشتراك في عرض {offer} لدى {shop} بمبلغ {price} ر.س لعدد {uses} مرات، مدة العرض {duration} يوم.",
-      "subscription_activated": "مرحباً بك، تم الاشتراك في عرض {offer} لدى {shop} بمبلغ {price} ر.س لعدد {uses} مرات، مدة العرض {duration} يوم.",
-      "subscription_success_simple": "مرحباً بك، تم الاشتراك في عرض {offer} لدى {shop} بمبلغ {price} ر.س لعدد {uses} مرات، مدة العرض {duration} يوم.",
-      "withdrawal_success": "تم خصم {amount} ر.س من رصيدك عند {shop} رصيدك الحالي {balance} ر.س. إجمالي ما وفرته هو {total} ر.س.",
-      "withdrawal_success_no_savings": "تم خصم {amount} ر.س من رصيدك عند {shop} رصيدك الحالي {balance} ر.س",
-      "withdrawal_success_saved": "تم خصم {amount} ر.س من رصيدك عند {shop} رصيدك الحالي {balance} ر.س المبلغ الموفر من هذه العملية {savings} ر.س",
-      "offer_used": "مرحباً بك، تم الاستفادة من عرض {offer} لدى {shop} عدد المرات المتبقي {remaining} مرات، باقي على العرض {days} أيام."
+      "footer": " إجمالي توفيرك معنا هو {total} ر.س. تابع رصيدك عبر: https://tqdrplus.sa/my",
+      "subscription_success": "مرحباً بك، تم الاشتراك في عرض {offer} لدى {shop} بمبلغ {price} ر.س لعدد {uses} مرات، مدة العرض {duration} يوم. لمتابعة رصيدك: https://tqdrplus.sa/my",
+      "subscription_activated": "مرحباً بك، تم الاشتراك في عرض {offer} لدى {shop} بمبلغ {price} ر.س لعدد {uses} مرات، مدة العرض {duration} يوم. لمتابعة رصيدك: https://tqdrplus.sa/my",
+      "subscription_success_simple": "مرحباً بك، تم الاشتراك في عرض {offer} لدى {shop} بمبلغ {price} ر.س لعدد {uses} مرات، مدة العرض {duration} يوم. لمتابعة رصيدك: https://tqdrplus.sa/my",
+      "withdrawal_success": "تم خصم {amount} ر.س من رصيدك عند {shop} رصيدك الحالي {balance} ر.س. إجمالي ما وفرته هو {total} ر.س. لمتابعة رصيدك: https://tqdrplus.sa/my",
+      "withdrawal_success_no_savings": "تم خصم {amount} ر.س من رصيدك عند {shop} رصيدك الحالي {balance} ر.س. لمتابعة رصيدك: https://tqdrplus.sa/my",
+      "withdrawal_success_saved": "تم خصم {amount} ر.س من رصيدك عند {shop} رصيدك الحالي {balance} ر.س المبلغ الموفر من هذه العملية {savings} ر.س. لمتابعة رصيدك: https://tqdrplus.sa/my",
+      "offer_used": "مرحباً بك، تم الاستفادة من عرض {offer} لدى {shop} عدد المرات المتبقي {remaining} مرات، باقي على العرض {days} أيام. لمتابعة رصيدك: https://tqdrplus.sa/my"
     },
     "withdrawal_type_title": "نوع عملية الخصم",
     "withdrawal_type_prepaid": "خصم من الرصيد العام",
