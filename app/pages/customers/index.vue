@@ -907,9 +907,9 @@ watch(searchQuery, fetchCustomers)
             <!-- Amount to Add (الرصيد المضاف) & Cash Paid (المبلغ المدفوع كاش) -->
             <div class="grid grid-cols-2 gap-4">
               <div class="space-y-2">
-                <label class="block text-xs font-bold text-slate-500">الرصيد المضاف</label>
+                <label class="block text-xs font-bold text-slate-500">المبلغ المدفوع كاش</label>
                 <input 
-                  v-model="txForm.amount" 
+                  v-model="txForm.paid_amount" 
                   type="number" 
                   required
                   autofocus
@@ -920,9 +920,9 @@ watch(searchQuery, fetchCustomers)
               </div>
 
               <div class="space-y-2">
-                <label class="block text-xs font-bold text-slate-500">المبلغ المدفوع كاش</label>
+                <label class="block text-xs font-bold text-slate-500">الرصيد المضاف</label>
                 <input 
-                  v-model="txForm.paid_amount" 
+                  v-model="txForm.amount" 
                   type="number" 
                   required
                   step="0.01" 

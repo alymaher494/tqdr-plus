@@ -208,6 +208,19 @@ onMounted(fetchData)
         <!-- HOME TAB -->
         <template v-if="currentTab === 'home'">
 
+          <!-- Prominent Savings Encouragement Card -->
+          <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-500/20 p-6 rounded-[32px] flex items-center justify-between shadow-sm">
+            <div class="space-y-1">
+              <p class="text-xs font-black text-emerald-600 dark:text-emerald-400">لقد وفرت مع تقدر بلس 🎁</p>
+              <h4 class="text-3xl font-black text-slate-900 dark:text-white">
+                {{ customer?.total_saved || 0 }} <span class="text-xs font-bold opacity-75">{{ $t('common.currency') }}</span>
+              </h4>
+              <p class="text-[10px] text-slate-500">استمر في استخدام تقدر بلس لزيادة مدخراتك!</p>
+            </div>
+            <div class="w-14 h-14 bg-emerald-500/10 text-emerald-500 rounded-2xl flex items-center justify-center">
+              <TrendingUp class="w-8 h-8" />
+            </div>
+          </div>
 
           <!-- Shop Info -->
           <div class="bg-slate-100 dark:bg-white/5 p-6 rounded-[32px] flex items-center justify-between border border-transparent hover:border-emerald-500/20 transition-all">
