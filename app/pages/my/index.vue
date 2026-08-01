@@ -37,6 +37,8 @@ const customer = ref(null)
 const shop = ref(null)
 const transactions = ref([])
 const subscriptions = ref([])
+const wallets = ref([])
+const selectedShopId = ref('')
 const loading = ref(true)
 const currentTab = ref('home') // 'home', 'transactions', 'offers'
 
@@ -44,11 +46,17 @@ const fetchData = async () => {
   try {
     loading.value = true
     
-    const res = await $fetch('/api/customer/data')
+    const url = selectedShopId.value ? `/api/customer/data?shop_id=${selectedShopId.value}` : '/api/customer/data'
+    const res = await $fetch(url)
     customer.value = res.customer
     shop.value = res.shop
     transactions.value = res.transactions
     subscriptions.value = res.subscriptions
+    wallets.value = res.wallets || []
+
+    if (res.shop && !selectedShopId.value) {
+      selectedShopId.value = res.shop.id
+    }
 
   } catch (e) {
     // Session invalid - clear and redirect to login
@@ -156,7 +164,26 @@ onMounted(fetchData)
             </div>
             <div>
               <p class="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em] mb-1">{{ $t('dashboard.customer_stats.welcome_back') }}</p>
-              <h1 class="text-3xl font-black text-white leading-tight">{{ customer?.name }}</h1>
+              <h1 class="text-3xl font-black text-white leading-tight mb-1">{{ customer?.name }}</h1>
+              
+              <!-- Store/Wallet Switcher -->
+              <div v-if="wallets.length > 1" class="mt-2 flex items-center gap-2">
+                <span class="text-[9px] text-white/50 font-bold">المتجر:</span>
+                <select 
+                  v-model="selectedShopId" 
+                  @change="fetchData" 
+                  class="bg-white/10 text-white border border-white/20 rounded-xl px-3 py-1 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all cursor-pointer"
+                >
+                  <option 
+                    v-for="w in wallets" 
+                    :key="w.shopId" 
+                    :value="w.shopId"
+                    class="text-slate-900 bg-white font-bold"
+                  >
+                    {{ w.shopName }} ({{ w.balance }} ر.س)
+                  </option>
+                </select>
+              </div>
             </div>
           </div>
           <button @click="handleLogout" class="w-12 h-12 bg-white/5 hover:bg-red-500/10 border border-white/10 rounded-2xl flex items-center justify-center text-slate-400 hover:text-red-500 transition-all duration-300 backdrop-blur-md">

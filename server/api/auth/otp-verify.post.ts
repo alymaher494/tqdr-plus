@@ -58,6 +58,7 @@ export default defineEventHandler(async (event) => {
 
   return {
     success: true,
-    customerId: customer.id
+    customerId: customer.id,
+    phone: cleanPhone
   }
 })

@@ -27,25 +27,98 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, message: 'Unauthorized' })
   }
 
-  const customerId = verifyCustomerToken(customerToken)
-  if (!customerId) {
+  const payload = verifyCustomerToken(customerToken)
+  if (!payload) {
     throw createError({ statusCode: 401, message: 'Invalid or tampered session' })
   }
 
   // 2. Initialize service role client
   const client = serverSupabaseServiceRole(event)
 
-  try {
-    // 3. Fetch Customer Data (select specific columns instead of *)
-    const { data: customer, error: custError } = await client
-      .from('customers')
-      .select('id, name, mobile_number, balance, total_saved, status, shop_owner_id, created_at')
-      .eq('id', customerId)
-      .single()
+  // Get selected shop_id from query params if any
+  const query = getQuery(event)
+  const selectedShopId = query.shop_id as string
 
-    if (custError || !customer) {
+  try {
+    let customerRecords: any[] = []
+    let selectedCustomer: any = null
+
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(payload)
+
+    if (isUUID) {
+      // Backward compatibility: payload is a customer UUID
+      const { data: firstCustomer } = await client
+        .from('customers')
+        .select('*')
+        .eq('id', payload)
+        .maybeSingle()
+
+      if (firstCustomer) {
+        const phone = firstCustomer.mobile_number
+        const shortPhone = phone.startsWith('966') ? phone.substring(3) : phone
+        const shortPhoneWithZero = '0' + shortPhone
+
+        const { data: records } = await client
+          .from('customers')
+          .select('id, name, mobile_number, balance, total_saved, status, shop_owner_id, created_at')
+          .or(`mobile_number.eq.${phone},mobile_number.eq.${shortPhone},mobile_number.eq.${shortPhoneWithZero}`)
+
+        customerRecords = records || []
+        
+        if (selectedShopId) {
+          selectedCustomer = customerRecords.find(r => r.shop_owner_id === selectedShopId) || firstCustomer
+        } else {
+          selectedCustomer = firstCustomer
+        }
+      }
+    } else {
+      // payload is phone number
+      const phone = payload
+      const shortPhone = phone.startsWith('966') ? phone.substring(3) : phone
+      const shortPhoneWithZero = '0' + shortPhone
+
+      const { data: records } = await client
+        .from('customers')
+        .select('id, name, mobile_number, balance, total_saved, status, shop_owner_id, created_at')
+        .or(`mobile_number.eq.${phone},mobile_number.eq.${shortPhone},mobile_number.eq.${shortPhoneWithZero}`)
+
+      customerRecords = records || []
+
+      if (customerRecords.length > 0) {
+        if (selectedShopId) {
+          selectedCustomer = customerRecords.find(r => r.shop_owner_id === selectedShopId) || customerRecords[0]
+        } else {
+          selectedCustomer = customerRecords[0]
+        }
+      }
+    }
+
+    if (!selectedCustomer) {
       deleteCookie(event, 'customer_token')
       throw createError({ statusCode: 401, message: 'Customer session invalid or expired' })
+    }
+
+    const customer = selectedCustomer
+    const customerId = customer.id
+
+    // Fetch all shop profiles for store switcher
+    const shopIds = customerRecords.map(r => r.shop_owner_id).filter(Boolean)
+    let wallets: any[] = []
+    if (shopIds.length > 0) {
+      const { data: shopsData } = await client
+        .from('profiles')
+        .select('id, shop_name')
+        .in('id', shopIds)
+
+      wallets = customerRecords.map(r => {
+        const s = (shopsData || []).find(sh => sh.id === r.shop_owner_id)
+        return {
+          customerId: r.id,
+          shopId: r.shop_owner_id,
+          shopName: s?.shop_name || 'متجر غير معروف',
+          balance: r.balance
+        }
+      })
     }
 
     // 4. Fetch Shop Profile
@@ -133,7 +206,8 @@ export default defineEventHandler(async (event) => {
       customer,
       shop,
       transactions: enrichedTransactions,
-      subscriptions: enrichedSubscriptions
+      subscriptions: enrichedSubscriptions,
+      wallets
     }
   } catch (e: any) {
     throw createError({ statusCode: e.statusCode || 500, message: e.message })

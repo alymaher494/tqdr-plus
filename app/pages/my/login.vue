@@ -46,7 +46,7 @@ const handleVerifyOTP = async () => {
       // Create signed session cookie via server API
       await $fetch('/api/auth/customer-session', {
         method: 'POST',
-        body: { customerId: res.customerId }
+        body: { customerId: res.customerId, phone: res.phone }
       })
       navigateTo('/my', { replace: true })
     }
