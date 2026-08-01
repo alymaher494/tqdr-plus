@@ -202,12 +202,10 @@ const fetchDashboardData = async () => {
     withdrawalData.value = withs
     chartDays.value = days
 
-    // 6. Recent Transactions (fetch only prepaid - no offer_id)
     const { data: recentTxs } = await client
       .from('transactions')
       .select('*, customer:customers(name)')
       .eq('shop_owner_id', currentUser.id)
-      .is('offer_id', null)
       .order('created_at', { ascending: false })
       .limit(10)
     recentTransactions.value = recentTxs || []
@@ -478,12 +476,15 @@ onMounted(fetchDashboardData)
                       <component :is="tx.type === 'deposit' ? Plus : Activity" class="w-5 h-5" />
                     </div>
                     <span class="font-black text-sm" :class="tx.type === 'deposit' ? 'text-emerald-500' : 'text-red-500'">
-                      {{ tx.type === 'deposit' ? $t('dashboard.merchant_stats.deposit') : $t('dashboard.merchant_stats.withdrawal') }}
+                      {{ tx.offer_id ? (tx.type === 'deposit' ? 'تفعيل اشتراك' : 'استهلاك زيارة ⚡') : (tx.type === 'deposit' ? $t('dashboard.merchant_stats.deposit') : $t('dashboard.merchant_stats.withdrawal')) }}
                     </span>
                   </div>
                 </td>
                 <td class="px-10 py-8">
-                  <p class="font-black text-2xl" :class="tx.type === 'deposit' ? 'text-emerald-500' : 'text-red-500'">
+                  <p v-if="tx.offer_id && tx.type === 'withdrawal'" class="font-black text-2xl text-amber-500">
+                    -1 زيارة
+                  </p>
+                  <p v-else class="font-black text-2xl" :class="tx.type === 'deposit' ? 'text-emerald-500' : 'text-red-500'">
                     {{ tx.type === 'deposit' ? '+' : '-' }}{{ tx.amount }} <span class="text-xs opacity-60 font-bold">{{ $t('common.currency') }}</span>
                   </p>
                 </td>
