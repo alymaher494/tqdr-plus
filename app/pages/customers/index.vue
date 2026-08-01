@@ -1045,6 +1045,7 @@ watch(searchQuery, fetchCustomers)
         </form>
       </div>
     </div>
+  </div>
 
     <!-- Modal: Transaction History (Simple Version) -->
     <div v-if="showHistoryModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
