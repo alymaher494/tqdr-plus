@@ -43,6 +43,7 @@ const showHistoryModal = ref(false)
 const selectedCustomer = ref(null)
 const customerHistory = ref([])
 const availableOffers = ref([])
+const activeSubscriptions = ref([])
 const showDeleteModal = ref(false)
 const customerToDelete = ref(null)
 const showErrorModal = ref(false)
@@ -425,15 +426,20 @@ const handleQuickTx = async () => {
           .select('*, offer:subscription_offers(*)')
           .eq('customer_id', customer.id)
           .eq('offer_id', txForm.value.offer_id)
-          .gte('expires_at', new Date().toISOString())
-          .single()
+          .maybeSingle()
         
         if (subData) {
+          const { count: usedCount } = await client
+            .from('transactions')
+            .select('*', { count: 'exact', head: true })
+            .eq('customer_id', customer.id)
+            .eq('offer_id', txForm.value.offer_id)
+            .eq('type', 'withdrawal')
+
           const expiresDate = new Date(subData.expires_at)
           const now = new Date()
           const daysLeft = Math.max(0, Math.ceil((expiresDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)))
-          const usedCount = (subData.used_count || 0) + 1
-          const remaining = Math.max(0, (subData.offer?.usage_limit || 0) - usedCount)
+          const remaining = Math.max(0, (subData.offer?.usage_limit || 0) - (usedCount || 0))
           smsMessage = t('customers.sms.offer_used', {
             offer: subData.offer?.name || '',
             shop: shopName,
@@ -537,9 +543,54 @@ const openEditModal = (customer: any) => {
   showEditModal.value = true
 }
 
-const openTxModal = (customer: any, type: 'deposit' | 'withdrawal') => {
+const openTxModal = async (customer: any, type: 'deposit' | 'withdrawal') => {
   selectedCustomer.value = customer
-  txForm.value.type = type
+  txForm.value = { 
+    type, 
+    amount: '' as any, 
+    paid_amount: '' as any, 
+    saved_amount: '' as any, 
+    note: '', 
+    offer_id: '', 
+    service_type: 'prepaid' 
+  }
+  
+  activeSubscriptions.value = []
+
+  if (type === 'withdrawal') {
+    try {
+      loading.value = true
+      const { data: subs } = await client
+        .from('customer_subscriptions')
+        .select('*, offer:subscription_offers(*)')
+        .eq('customer_id', customer.id)
+        .eq('status', 'active')
+        .gte('expires_at', new Date().toISOString())
+
+      const enriched = []
+      if (subs) {
+        for (const sub of subs) {
+          const { count } = await client
+            .from('transactions')
+            .select('*', { count: 'exact', head: true })
+            .eq('customer_id', customer.id)
+            .eq('offer_id', sub.offer_id)
+            .eq('type', 'withdrawal')
+
+          const remaining = Math.max(0, (sub.offer?.usage_limit || 0) - (count || 0))
+          enriched.push({
+            ...sub,
+            remaining_uses: remaining
+          })
+        }
+      }
+      activeSubscriptions.value = enriched
+    } catch (err) {
+      console.error('Error fetching customer active subscriptions:', err)
+    } finally {
+      loading.value = false
+    }
+  }
   showTxModal.value = true
 }
 
@@ -1013,20 +1064,24 @@ watch(searchQuery, fetchCustomers)
                 </div>
               </button>
 
+              <div v-if="activeSubscriptions.length === 0" class="text-center py-6 bg-slate-50 dark:bg-white/5 rounded-2xl border border-dashed border-slate-200 dark:border-white/10 text-xs font-bold text-slate-400">
+                لا يوجد عروض أو اشتراكات نشطة حالياً لهذا العميل.
+              </div>
+
               <button
-                v-for="offer in availableOffers"
-                :key="offer.id"
+                v-for="sub in activeSubscriptions"
+                :key="sub.id"
                 type="button"
-                @click="txForm.service_type = 'offer'; txForm.offer_id = offer.id; txForm.amount = 0"
-                :class="txForm.service_type === 'offer' && txForm.offer_id === offer.id ? 'bg-amber-500 text-slate-950 border-amber-500' : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 border-transparent'"
+                @click="txForm.service_type = 'offer'; txForm.offer_id = sub.offer_id; txForm.amount = 0"
+                :class="txForm.service_type === 'offer' && txForm.offer_id === sub.offer_id ? 'bg-amber-500 text-slate-950 border-amber-500' : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 border-transparent'"
                 class="px-6 py-4 rounded-[20px] border-2 text-sm font-black transition-all flex items-center gap-4"
               >
-                <div :class="txForm.service_type === 'offer' && txForm.offer_id === offer.id ? 'bg-white/20' : 'bg-amber-500/10'" class="w-10 h-10 rounded-xl flex items-center justify-center">
-                  <Sparkles class="w-5 h-5" :class="txForm.service_type === 'offer' && txForm.offer_id === offer.id ? 'text-slate-950' : 'text-amber-500'" />
+                <div :class="txForm.service_type === 'offer' && txForm.offer_id === sub.offer_id ? 'bg-white/20' : 'bg-amber-500/10'" class="w-10 h-10 rounded-xl flex items-center justify-center">
+                  <Sparkles class="w-5 h-5" :class="txForm.service_type === 'offer' && txForm.offer_id === sub.offer_id ? 'text-slate-950' : 'text-amber-500'" />
                 </div>
                 <div class="text-right flex-1">
-                  <p class="font-black">{{ $t('customers.withdrawal_type_offer') }}</p>
-                  <p class="text-xs opacity-70">{{ offer.name }} - {{ $t('customers.remaining_uses_label') }}</p>
+                  <p class="font-black">{{ sub.offer?.name }}</p>
+                  <p class="text-xs opacity-70">المتبقي: {{ sub.remaining_uses }} زيارة</p>
                 </div>
               </button>
             </div>
