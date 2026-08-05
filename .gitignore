@@ -25,3 +25,7 @@ logs
 
 # Scratch folder
 scratch/
+
+env
+.env
+
