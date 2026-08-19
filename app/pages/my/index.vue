@@ -29,7 +29,9 @@ definePageMeta({
 const client = useSupabaseClient()
 const customerToken = useCookie('customer_token')
 
-if (!customerToken.value) {
+// الكوكي httpOnly غير مرئي عبر document.cookie أثناء التنقل client-side،
+// لذلك يُفحص التوكن من جهة الخادم فقط (SSR) ويُترك للـ API التحقق الكامل
+if (import.meta.server && !customerToken.value) {
   navigateTo('/my/login')
 }
 
@@ -68,9 +70,11 @@ const fetchData = async () => {
   }
 }
 
-const handleLogout = () => {
-  const tokenCookie = useCookie('customer_token')
-  tokenCookie.value = null
+const handleLogout = async () => {
+  // مسح الكوكي httpOnly يتم من جهة الخادم (لا يمكن للمتصفح مسحه)
+  try {
+    await $fetch('/api/auth/logout', { method: 'POST' })
+  } catch { /* ignore */ }
   navigateTo('/my/login')
 }
 

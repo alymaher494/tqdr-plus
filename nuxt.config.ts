@@ -22,6 +22,14 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    '/**': {
+      headers: {
+        'X-Frame-Options': 'DENY',
+        'X-Content-Type-Options': 'nosniff',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'
+      }
+    },
     '/merchant/**': { ssr: false },
     '/customers': { ssr: false },
     '/transactions': { ssr: false },

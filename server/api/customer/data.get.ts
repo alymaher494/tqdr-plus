@@ -1,24 +1,4 @@
 import { serverSupabaseServiceRole } from '#supabase/server'
-import { createHmac } from 'crypto'
-
-// Verify signed customer cookie
-function verifyCustomerToken(token: string): string | null {
-  try {
-    const secret = process.env.NUXT_SUPABASE_SERVICE_KEY || ''
-    const parts = token.split('.')
-    if (parts.length !== 2) return null
-
-    const [customerId, signature] = parts
-    const expectedSig = createHmac('sha256', secret).update(customerId).digest('hex').substring(0, 16)
-
-    if (signature === expectedSig) {
-      return customerId
-    }
-    return null
-  } catch {
-    return null
-  }
-}
 
 export default defineEventHandler(async (event) => {
   // 1. Get and verify signed customer token from cookie
@@ -27,7 +7,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, message: 'Unauthorized' })
   }
 
-  const payload = verifyCustomerToken(customerToken)
+  const payload = verifyCustomerToken(event, customerToken)
   if (!payload) {
     throw createError({ statusCode: 401, message: 'Invalid or tampered session' })
   }

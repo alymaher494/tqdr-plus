@@ -79,9 +79,11 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // 6. Send SMS directly (bypass for test numbers in non-production environments only)
-  const isDev = process.env.NODE_ENV !== 'production'
-  const isTestNumber = isDev && (cleanPhone === '966566293256' || cleanPhone === '966500000000')
+  // 6. Skip SMS dispatch for test numbers — مفعّل فقط عند ضبط NUXT_ENABLE_TEST_OTP=true صراحةً.
+  // لم يعد يُستنتج من NODE_ENV حتى لا يبقى التجاوز حياً في الإنتاج.
+  const isTestNumber =
+    process.env.NUXT_ENABLE_TEST_OTP === 'true'
+    && (cleanPhone === '966566293256' || cleanPhone.startsWith('966500000'))
 
   if (isTestNumber) {
     return { success: true, message: 'تم إرسال كود التحقق بنجاح (رقم اختبارى).' }

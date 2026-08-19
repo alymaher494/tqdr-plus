@@ -5,6 +5,8 @@ definePageMeta({
   layout: false
 })
 
+const { t } = useI18n()
+
 const phone = ref('')
 const otpCode = ref('')
 const step = ref(1) // 1: Phone, 2: OTP
@@ -43,11 +45,6 @@ const handleVerifyOTP = async () => {
     })
 
     if (res.success) {
-      // Create signed session cookie via server API
-      await $fetch('/api/auth/customer-session', {
-        method: 'POST',
-        body: { customerId: res.customerId, phone: res.phone }
-      })
       navigateTo('/my', { replace: true })
     }
   } catch (e: any) {

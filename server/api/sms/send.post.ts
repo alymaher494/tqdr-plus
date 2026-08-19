@@ -1,4 +1,4 @@
-import { serverSupabaseUser } from '#supabase/server'
+import { serverSupabaseUser, serverSupabaseServiceRole } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -11,14 +11,27 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Security: Strictly verify that the request comes from an authenticated user session (merchant or admin)
-  // Internal server-to-server calls should invoke the sendSMS utility directly instead of calling this API route.
+  // Security: فقط تاجر (shop_owner) أو أدمن (admin) يستطيع إرسال SMS.
+  // أي حساب Supabase مصادق (حتى لو سُجّل ذاتياً) لا يكفي — يمنع إساءة
+  // الاستخدام/التكلفة/التصيّد من حسابات دخيلة.
   try {
     const user = await serverSupabaseUser(event)
     if (!user) {
       throw createError({ statusCode: 401, message: 'Unauthorized: Authentication required' })
     }
-  } catch {
+
+    const client = serverSupabaseServiceRole(event)
+    const { data: profile } = await client
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    if (!profile || !['shop_owner', 'admin'].includes(profile.role)) {
+      throw createError({ statusCode: 403, message: 'Forbidden: Insufficient role' })
+    }
+  } catch (e: any) {
+    if (e.statusCode) throw e
     throw createError({ statusCode: 401, message: 'Unauthorized: Authentication required' })
   }
 
@@ -29,4 +42,3 @@ export default defineEventHandler(async (event) => {
     return { success: false, error: error.data || error.message }
   }
 })
-
