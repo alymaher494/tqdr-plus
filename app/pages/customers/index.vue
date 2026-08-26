@@ -824,51 +824,51 @@ watch(searchQuery, fetchCustomers)
     <!-- Modal: Add New Customer -->
     <div v-if="showAddModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" @click="showAddModal = false"></div>
-      <div class="relative bg-white dark:bg-slate-900 w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[40px] shadow-2xl border border-white/10 custom-scrollbar animate-in fade-in zoom-in duration-300">
-        <div class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-gradient-to-r from-emerald-500/10 to-transparent">
+      <div class="relative bg-white dark:bg-slate-900 w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-[32px] shadow-2xl border border-white/10 custom-scrollbar animate-in fade-in zoom-in duration-300">
+        <div class="p-5 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-gradient-to-r from-emerald-500/10 to-transparent">
           <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/20">
-              <Plus class="w-6 h-6" />
+            <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/20">
+              <Plus class="w-5 h-5" />
             </div>
             <div>
-              <h3 class="text-2xl font-black text-slate-900 dark:text-white">{{ $t('customers.add_new') }}</h3>
-              <p class="text-sm text-slate-500">{{ $t('customers.subtitle') }}</p>
+              <h3 class="text-xl font-black text-slate-900 dark:text-white">{{ $t('customers.add_new') }}</h3>
+              <p class="text-xs text-slate-500">{{ $t('customers.subtitle') }}</p>
             </div>
           </div>
           <button @click="showAddModal = false" class="p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition-all">
-            <X class="w-6 h-6 text-slate-400" />
+            <X class="w-5 h-5 text-slate-400" />
           </button>
         </div>
 
-        <form @submit.prevent="handleAddCustomer" class="p-10 space-y-8">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-2">
-              <label class="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                <User class="w-4 h-4 text-emerald-500" /> {{ $t('customers.table.name') }} ({{ $t('common.optional') }})
+        <form @submit.prevent="handleAddCustomer" class="p-6 space-y-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                <User class="w-3.5 h-3.5 text-emerald-500" /> {{ $t('customers.table.name') }} ({{ $t('common.optional') }})
               </label>
-              <input v-model="form.name" type="text" placeholder="Ex: Mohammed..." class="w-full bg-slate-100 dark:bg-white/5 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-emerald-500" />
+              <input v-model="form.name" type="text" placeholder="Ex: Mohammed..." class="w-full bg-slate-100 dark:bg-white/5 border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 text-sm" />
             </div>
-            <div class="space-y-2">
-              <label class="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                <Smartphone class="w-4 h-4 text-emerald-500" /> {{ $t('customers.table.phone') }}
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                <Smartphone class="w-3.5 h-3.5 text-emerald-500" /> {{ $t('customers.table.phone') }}
               </label>
-              <input v-model="form.mobile_number" type="tel" required placeholder="05xxxxxxxx" class="w-full bg-slate-100 dark:bg-white/5 border-none rounded-2xl px-5 py-4 focus:ring-2 focus:ring-emerald-500" />
+              <input v-model="form.mobile_number" type="tel" required placeholder="05xxxxxxxx" class="w-full bg-slate-100 dark:bg-white/5 border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 text-sm" />
             </div>
           </div>
 
 
 
           <!-- Subscription Offers -->
-          <div class="space-y-4">
-            <label class="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-              <DollarSign class="w-4 h-4 text-emerald-500" /> {{ $t('customers.select_offer') }}
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <DollarSign class="w-3.5 h-3.5 text-emerald-500" /> {{ $t('customers.select_offer') }}
             </label>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <button 
                 type="button"
                 @click="form.offer_id = ''"
                 :class="form.offer_id === '' ? 'bg-emerald-500 text-slate-950 border-emerald-500' : 'bg-slate-100 dark:bg-white/5 text-slate-500 border-transparent'"
-                class="px-4 py-3 rounded-2xl border-2 text-sm font-bold transition-all text-center"
+                class="px-4 py-2 rounded-xl border-2 text-xs font-bold transition-all text-center"
               >
                 {{ $t('customers.no_offer_prepaid') }}
               </button>
@@ -878,28 +878,28 @@ watch(searchQuery, fetchCustomers)
                 type="button"
                 @click="form.offer_id = offer.id; form.added_balance = offer.price; form.paid_amount = offer.price"
                 :class="form.offer_id === offer.id ? 'bg-emerald-500 text-slate-950 border-emerald-500' : 'bg-slate-100 dark:bg-white/5 text-slate-500 border-transparent'"
-                class="px-4 py-3 rounded-2xl border-2 text-sm font-bold transition-all text-center flex flex-col items-center gap-1"
+                class="px-4 py-2.5 rounded-xl border-2 text-xs font-bold transition-all text-center flex flex-col items-center gap-0.5"
               >
                 <span>{{ offer.name }}</span>
-                <span class="text-[10px] opacity-70">{{ offer.price }} {{ $t('common.currency') }} - {{ offer.duration }} {{ $t('subscriptions.duration_unit') }}</span>
+                <span class="text-[9px] opacity-70">{{ offer.price }} {{ $t('common.currency') }} - {{ offer.duration }} {{ $t('subscriptions.duration_unit') }}</span>
               </button>
             </div>
           </div>
 
-
-          <div class="bg-emerald-500/5 p-8 rounded-[32px] border border-emerald-500/10 space-y-6">
-            <div class="flex items-center gap-2 text-emerald-600 font-black mb-2">
-              <Wallet class="w-5 h-5" />
+          <!-- Opening Balance Card -->
+          <div class="bg-emerald-500/5 p-5 rounded-[24px] border border-emerald-500/10 space-y-4">
+            <div class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-black mb-1 text-sm">
+              <Wallet class="w-4 h-4" />
               <span>{{ $t('customers.opening_balance') }}</span>
             </div>
-            <div class="grid grid-cols-2 gap-6">
-              <div class="space-y-2">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-1">
                 <label class="text-[10px] uppercase font-bold text-slate-500">{{ $t('customers.paid_amount') }}</label>
-                <input v-model="form.paid_amount" type="number" step="0.01" :readonly="form.offer_id !== ''" :class="form.offer_id !== '' ? 'opacity-50 cursor-not-allowed' : ''" class="w-full bg-white dark:bg-slate-900 border-none rounded-2xl px-4 py-3 font-bold text-lg focus:ring-2 focus:ring-emerald-500" />
+                <input v-model="form.paid_amount" type="number" step="0.01" :readonly="form.offer_id !== ''" :class="form.offer_id !== '' ? 'opacity-50 cursor-not-allowed' : ''" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 font-bold text-sm focus:ring-2 focus:ring-emerald-500" />
               </div>
-              <div class="space-y-2">
+              <div class="space-y-1">
                 <label class="text-[10px] uppercase font-bold text-slate-500">{{ $t('customers.added_balance') }}</label>
-                <input v-model="form.added_balance" type="number" step="0.01" :readonly="form.offer_id !== ''" :class="form.offer_id !== '' ? 'opacity-50 cursor-not-allowed' : ''" class="w-full bg-white dark:bg-slate-900 border-none rounded-2xl px-4 py-3 font-bold text-lg text-emerald-500 focus:ring-2 focus:ring-emerald-500" />
+                <input v-model="form.added_balance" type="number" step="0.01" :readonly="form.offer_id !== ''" :class="form.offer_id !== '' ? 'opacity-50 cursor-not-allowed' : ''" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 font-bold text-sm text-emerald-500 focus:ring-2 focus:ring-emerald-500" />
               </div>
             </div>
           </div>
@@ -907,9 +907,9 @@ watch(searchQuery, fetchCustomers)
           <button 
             type="submit" 
             :disabled="loading"
-            class="w-full bg-slate-900 dark:bg-emerald-500 text-white dark:text-slate-950 font-black py-5 rounded-[24px] text-lg hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-emerald-500/10 flex items-center justify-center gap-3"
+            class="w-full bg-slate-900 dark:bg-emerald-500 text-white dark:text-slate-950 font-black py-4 rounded-[20px] text-base hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2"
           >
-            <span v-if="loading" class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+            <span v-if="loading" class="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
             <span>{{ $t('customers.save_customer_sub') }}</span>
           </button>
 
@@ -937,27 +937,27 @@ watch(searchQuery, fetchCustomers)
 
         <!-- Normal Form Mode -->
         <div v-else>
-          <div class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between" :class="txForm.type === 'deposit' ? 'bg-emerald-500/10' : 'bg-red-500/10'">
+          <div class="p-5 border-b border-slate-100 dark:border-white/5 flex items-center justify-between" :class="txForm.type === 'deposit' ? 'bg-emerald-500/10' : 'bg-red-500/10'">
           <div class="flex items-center gap-4">
-            <div :class="txForm.type === 'deposit' ? 'bg-emerald-500' : 'bg-red-500'" class="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg">
-              <component :is="txForm.type === 'deposit' ? ArrowUpCircle : ArrowDownCircle" class="w-6 h-6" />
+            <div :class="txForm.type === 'deposit' ? 'bg-emerald-500' : 'bg-red-500'" class="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-lg">
+              <component :is="txForm.type === 'deposit' ? ArrowUpCircle : ArrowDownCircle" class="w-5 h-5" />
             </div>
             <div>
-              <h3 class="text-2xl font-black text-slate-900 dark:text-white">{{ txForm.type === 'deposit' ? $t('customers.deposit_new') : $t('customers.withdraw_balance') }}</h3>
-              <p class="text-sm text-slate-500">{{ selectedCustomer?.name }}</p>
+              <h3 class="text-xl font-black text-slate-900 dark:text-white">{{ txForm.type === 'deposit' ? $t('customers.deposit_new') : $t('customers.withdraw_balance') }}</h3>
+              <p class="text-xs text-slate-500">{{ selectedCustomer?.name }}</p>
             </div>
           </div>
           <button @click="showTxModal = false" class="p-2 hover:bg-black/5 rounded-xl transition-all">
-            <X class="w-6 h-6 text-slate-400" />
+            <X class="w-5 h-5 text-slate-400" />
           </button>
         </div>
 
-        <form @submit.prevent="handleQuickTx" class="p-10 space-y-8">
+        <form @submit.prevent="handleQuickTx" class="p-6 space-y-5">
           <!-- Interactive Input Fields based on Tx Type -->
           <div v-if="txForm.type === 'deposit' && txForm.offer_id === ''" class="space-y-6">
             <!-- Amount to Add (الرصيد المضاف) & Cash Paid (المبلغ المدفوع كاش) -->
             <div class="grid grid-cols-2 gap-4">
-              <div class="space-y-2">
+              <div class="space-y-1.5">
                 <label class="block text-xs font-bold text-slate-500">المبلغ المدفوع كاش</label>
                 <input 
                   v-model="txForm.paid_amount" 
@@ -966,11 +966,11 @@ watch(searchQuery, fetchCustomers)
                   autofocus
                   step="0.01" 
                   placeholder="0.00"
-                  class="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 font-black text-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" 
+                  class="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 font-black text-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" 
                 />
               </div>
 
-              <div class="space-y-2">
+              <div class="space-y-1.5">
                 <label class="block text-xs font-bold text-slate-500">الرصيد المضاف</label>
                 <input 
                   v-model="txForm.amount" 
@@ -978,15 +978,15 @@ watch(searchQuery, fetchCustomers)
                   required
                   step="0.01" 
                   placeholder="0.00"
-                  class="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 font-black text-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" 
+                  class="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 font-black text-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" 
                 />
               </div>
             </div>
 
             <!-- Savings Feedback -->
-            <div class="bg-emerald-500/5 border border-emerald-500/10 p-4 rounded-2xl flex items-center justify-between">
-              <span class="text-sm font-bold text-slate-500 dark:text-slate-400">المبلغ الموفر للعميل:</span>
-              <span class="text-xl font-black text-emerald-500">
+            <div class="bg-emerald-500/5 border border-emerald-500/10 p-3 rounded-xl flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-500 dark:text-slate-400">المبلغ الموفر للعميل:</span>
+              <span class="text-lg font-black text-emerald-500">
                 {{ Math.max(0, Number(txForm.amount || 0) - Number(txForm.paid_amount || 0)) }} {{ $t('common.currency') }}
               </span>
             </div>
@@ -1009,18 +1009,18 @@ watch(searchQuery, fetchCustomers)
           </div>
 
           <!-- Subscription Selection in Tx Modal (for deposit) -->
-          <div v-if="txForm.type === 'deposit' && availableOffers.length > 0" class="space-y-4">
-            <label class="text-center block text-sm font-bold text-slate-500 uppercase tracking-widest">{{ $t('customers.select_offer') }}</label>
-            <div class="grid grid-cols-1 gap-3">
+          <div v-if="txForm.type === 'deposit' && availableOffers.length > 0" class="space-y-2">
+            <label class="text-center block text-xs font-bold text-slate-500 uppercase tracking-widest">{{ $t('customers.select_offer') }}</label>
+            <div class="grid grid-cols-1 gap-2">
               <button 
                 type="button"
                 @click="txForm.offer_id = ''; txForm.amount = ''; txForm.paid_amount = '';"
-                :class="txForm.offer_id === '' ? 'bg-emerald-500 text-slate-950 border-emerald-500 scale-105 shadow-lg' : 'bg-slate-100 dark:bg-white/5 text-slate-500 border-transparent hover:bg-slate-200'"
-                class="px-6 py-4 rounded-[24px] border-2 text-base font-black transition-all flex items-center justify-between group"
+                :class="txForm.offer_id === '' ? 'bg-emerald-500 text-slate-950 border-emerald-500 scale-[1.02] shadow-md' : 'bg-slate-100 dark:bg-white/5 text-slate-500 border-transparent hover:bg-slate-200'"
+                class="px-4 py-2.5 rounded-xl border-2 text-sm font-black transition-all flex items-center justify-between group"
               >
-                <div class="flex items-center gap-4">
-                  <div :class="txForm.offer_id === '' ? 'bg-white/20' : 'bg-emerald-500/10'" class="w-10 h-10 rounded-xl flex items-center justify-center">
-                    <Wallet class="w-5 h-5" :class="txForm.offer_id === '' ? 'text-slate-950' : 'text-emerald-500'" />
+                <div class="flex items-center gap-3">
+                  <div :class="txForm.offer_id === '' ? 'bg-white/20' : 'bg-emerald-500/10'" class="w-8 h-8 rounded-lg flex items-center justify-center">
+                    <Wallet class="w-4 h-4" :class="txForm.offer_id === '' ? 'text-slate-950' : 'text-emerald-500'" />
                   </div>
                   <span>{{ $t('customers.no_offer_prepaid') }}</span>
                 </div>
@@ -1031,40 +1031,40 @@ watch(searchQuery, fetchCustomers)
                 v-for="offer in availableOffers" 
                 :key="offer.id"
                 @click="txForm.offer_id = offer.id; txForm.amount = offer.price; txForm.paid_amount = offer.price;"
-                :class="txForm.offer_id === offer.id ? 'bg-emerald-500 text-slate-950 border-emerald-500 scale-105 shadow-lg' : 'bg-slate-100 dark:bg-white/5 text-slate-500 border-transparent hover:bg-slate-200'"
-                class="px-6 py-5 rounded-[24px] border-2 text-base font-black transition-all flex items-center justify-between group"
+                :class="txForm.offer_id === offer.id ? 'bg-emerald-500 text-slate-950 border-emerald-500 scale-[1.02] shadow-md' : 'bg-slate-100 dark:bg-white/5 text-slate-500 border-transparent hover:bg-slate-200'"
+                class="px-4 py-3 rounded-xl border-2 text-sm font-black transition-all flex items-center justify-between group"
               >
-                <div class="flex items-center gap-4">
-                  <div :class="txForm.offer_id === offer.id ? 'bg-white/20' : 'bg-emerald-500/10'" class="w-10 h-10 rounded-xl flex items-center justify-center">
-                    <Sparkles class="w-5 h-5 text-emerald-500" />
+                <div class="flex items-center gap-3">
+                  <div :class="txForm.offer_id === offer.id ? 'bg-white/20' : 'bg-emerald-500/10'" class="w-8 h-8 rounded-lg flex items-center justify-center">
+                    <Sparkles class="w-4 h-4 text-emerald-500" />
                   </div>
                   <span>{{ offer.name }}</span>
                 </div>
-                <div class="text-lg font-black">{{ offer.price }} {{ $t('common.currency') }}</div>
+                <div class="text-sm font-black">{{ offer.price }} {{ $t('common.currency') }}</div>
               </button>
             </div>
           </div>
 
           <!-- Withdrawal Type Selector -->
-          <div v-if="txForm.type === 'withdrawal'" class="space-y-4">
-            <label class="text-center block text-sm font-bold text-slate-500 uppercase tracking-widest">{{ $t('customers.withdrawal_type_title') }}</label>
-            <div class="grid grid-cols-1 gap-3">
+          <div v-if="txForm.type === 'withdrawal'" class="space-y-2">
+            <label class="text-center block text-xs font-bold text-slate-500 uppercase tracking-widest">{{ $t('customers.withdrawal_type_title') }}</label>
+            <div class="grid grid-cols-1 gap-2">
               <button
                 type="button"
                 @click="txForm.service_type = 'prepaid'; txForm.offer_id = ''"
                 :class="txForm.service_type === 'prepaid' ? 'bg-red-500 text-white border-red-500' : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 border-transparent'"
-                class="px-6 py-4 rounded-[20px] border-2 text-sm font-black transition-all flex items-center gap-4"
+                class="px-4 py-3 rounded-xl border-2 text-xs font-black transition-all flex items-center gap-3"
               >
-                <div :class="txForm.service_type === 'prepaid' ? 'bg-white/20' : 'bg-red-500/10'" class="w-10 h-10 rounded-xl flex items-center justify-center">
-                  <Wallet class="w-5 h-5" :class="txForm.service_type === 'prepaid' ? 'text-white' : 'text-red-500'" />
+                <div :class="txForm.service_type === 'prepaid' ? 'bg-white/20' : 'bg-red-500/10'" class="w-8 h-8 rounded-lg flex items-center justify-center">
+                  <Wallet class="w-4 h-4" :class="txForm.service_type === 'prepaid' ? 'text-white' : 'text-red-500'" />
                 </div>
                 <div class="text-right flex-1">
                   <p class="font-black">{{ $t('customers.withdrawal_type_prepaid') }}</p>
-                  <p class="text-xs opacity-70">{{ $t('common.currency') }} {{ selectedCustomer?.balance }}</p>
+                  <p class="text-[10px] opacity-70">{{ $t('common.currency') }} {{ selectedCustomer?.balance }}</p>
                 </div>
               </button>
 
-              <div v-if="activeSubscriptions.length === 0" class="text-center py-6 bg-slate-50 dark:bg-white/5 rounded-2xl border border-dashed border-slate-200 dark:border-white/10 text-xs font-bold text-slate-400">
+              <div v-if="activeSubscriptions.length === 0" class="text-center py-4 bg-slate-50 dark:bg-white/5 rounded-xl border border-dashed border-slate-200 dark:border-white/10 text-[10px] font-bold text-slate-400">
                 لا يوجد عروض أو اشتراكات نشطة حالياً لهذا العميل.
               </div>
 
@@ -1074,14 +1074,14 @@ watch(searchQuery, fetchCustomers)
                 type="button"
                 @click="txForm.service_type = 'offer'; txForm.offer_id = sub.offer_id; txForm.amount = 0"
                 :class="txForm.service_type === 'offer' && txForm.offer_id === sub.offer_id ? 'bg-amber-500 text-slate-950 border-amber-500' : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 border-transparent'"
-                class="px-6 py-4 rounded-[20px] border-2 text-sm font-black transition-all flex items-center gap-4"
+                class="px-4 py-3 rounded-xl border-2 text-xs font-black transition-all flex items-center gap-3"
               >
-                <div :class="txForm.service_type === 'offer' && txForm.offer_id === sub.offer_id ? 'bg-white/20' : 'bg-amber-500/10'" class="w-10 h-10 rounded-xl flex items-center justify-center">
-                  <Sparkles class="w-5 h-5" :class="txForm.service_type === 'offer' && txForm.offer_id === sub.offer_id ? 'text-slate-950' : 'text-amber-500'" />
+                <div :class="txForm.service_type === 'offer' && txForm.offer_id === sub.offer_id ? 'bg-white/20' : 'bg-amber-500/10'" class="w-8 h-8 rounded-lg flex items-center justify-center">
+                  <Sparkles class="w-4 h-4" :class="txForm.service_type === 'offer' && txForm.offer_id === sub.offer_id ? 'text-slate-950' : 'text-amber-500'" />
                 </div>
                 <div class="text-right flex-1">
                   <p class="font-black">{{ sub.offer?.name }}</p>
-                  <p class="text-xs opacity-70">المتبقي: {{ sub.remaining_uses }} زيارة</p>
+                  <p class="text-[10px] opacity-70">المتبقي: {{ sub.remaining_uses }} زيارة</p>
                 </div>
               </button>
             </div>
@@ -1091,9 +1091,9 @@ watch(searchQuery, fetchCustomers)
             type="submit" 
             :disabled="loading"
             :class="txForm.type === 'deposit' ? 'bg-emerald-500 shadow-emerald-500/20' : txForm.service_type === 'offer' ? 'bg-amber-500 shadow-amber-500/20' : 'bg-red-500 shadow-red-500/20'"
-            class="w-full text-slate-950 font-black py-6 rounded-[28px] text-xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl flex items-center justify-center gap-3"
+            class="w-full text-slate-950 font-black py-4 rounded-[20px] text-base hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg flex items-center justify-center gap-2"
           >
-            <span v-if="loading" class="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+            <span v-if="loading" class="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
             <span>{{ txForm.type === 'withdrawal' && txForm.service_type === 'offer' ? $t('customers.remaining_uses_label') : $t('common.confirm') }}</span>
           </button>
 

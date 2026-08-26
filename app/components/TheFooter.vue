@@ -61,7 +61,7 @@ const { locale } = useI18n()
           <h3 class="text-white font-black text-sm">{{ $t('landing.footer.quick_links') }}</h3>
           <ul class="flex flex-col gap-3 text-sm">
             <li><NuxtLink to="/" class="hover:text-green-400 transition-colors">{{ $t('landing.nav.home') }}</NuxtLink></li>
-            <li><NuxtLink to="/#features" class="hover:text-green-400 transition-colors">{{ $t('landing.nav.how_it_works') }}</NuxtLink></li>
+            <li><NuxtLink to="/#how-it-works" class="hover:text-green-400 transition-colors">{{ $t('landing.nav.how_it_works') }}</NuxtLink></li>
             <li><NuxtLink to="/#shops" class="hover:text-green-400 transition-colors">{{ $t('landing.nav.features') }}</NuxtLink></li>
             <li><NuxtLink to="/faq" class="hover:text-green-400 transition-colors">{{ $t('landing.nav.faq') }}</NuxtLink></li>
           </ul>

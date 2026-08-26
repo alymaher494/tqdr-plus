@@ -78,6 +78,7 @@ const form = ref({
   customer_id: '',
   type: 'deposit',
   amount: '' as any,
+  paid_amount: '' as any,
   note: '',
   offer_id: ''
 })
@@ -247,12 +248,16 @@ const handleAddTransaction = async () => {
       balance_after -= amount
     }
 
-    // 1b. Calculate Saving (if offer selected or if active subscription exists)
+    // 1b. Calculate Saving
     let savingAmount = 0
-    if (form.value.type === 'deposit' && form.value.offer_id) {
-      const offer = availableOffers.value.find(o => o.id === form.value.offer_id)
-      if (offer) {
-        savingAmount = Number(offer.discount || 0)
+    if (form.value.type === 'deposit') {
+      if (form.value.offer_id) {
+        const offer = availableOffers.value.find(o => o.id === form.value.offer_id)
+        if (offer) {
+          savingAmount = Number(offer.discount || 0)
+        }
+      } else {
+        savingAmount = Math.max(0, Number(form.value.amount || 0) - Number(form.value.paid_amount || 0))
       }
     } else if (form.value.type === 'withdrawal') {
       // Calculate saving ratio from the last prepaid deposit
@@ -282,13 +287,16 @@ const handleAddTransaction = async () => {
 
     // 2. Insert transaction
     const { error: txError } = await client.from('transactions').insert({
-      ...form.value,
-      shop_owner_id: currentUser.id,
-      paid_amount: form.value.type === 'deposit' ? Number(form.value.amount || 0) : 0,
+      customer_id: form.value.customer_id,
+      type: form.value.type,
+      amount: Number(form.value.amount || 0),
+      paid_amount: form.value.type === 'deposit' ? Number(form.value.paid_amount || form.value.amount || 0) : 0,
       saved_amount: savingAmount,
+      note: form.value.note,
+      offer_id: form.value.offer_id || null,
+      shop_owner_id: currentUser.id,
       balance_before,
-      balance_after,
-      offer_id: form.value.offer_id || null
+      balance_after
     })
 
     if (txError) throw txError
@@ -691,31 +699,43 @@ onMounted(async () => {
 
     <!-- New Transaction Modal -->
     <div v-if="showAddModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" @click="showAddModal = false"></div>
-      <div class="relative bg-white dark:bg-slate-900 w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-        <div class="p-6 border-b border-slate-100 dark:border-white/5 flex items-center justify-between">
-          <h3 class="text-xl font-bold text-slate-900 dark:text-white">{{ $t('transactions.new_transaction') }}</h3>
-          <button @click="showAddModal = false" class="text-slate-400 hover:text-slate-600">
-            <X class="w-6 h-6" />
+      <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" @click="showAddModal = false"></div>
+      <div class="relative bg-white dark:bg-slate-900 w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[40px] shadow-2xl border border-slate-100 dark:border-white/10 custom-scrollbar animate-in fade-in zoom-in duration-300 animate-fade-in">
+        
+        <!-- Header -->
+        <div class="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between" :class="form.type === 'deposit' ? 'bg-emerald-500/10' : 'bg-red-500/10'">
+          <div class="flex items-center gap-4">
+            <div :class="form.type === 'deposit' ? 'bg-emerald-500' : 'bg-red-500'" class="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg">
+              <component :is="form.type === 'deposit' ? ArrowUpCircle : ArrowDownCircle" class="w-6 h-6" />
+            </div>
+            <div>
+              <h3 class="text-2xl font-black text-slate-900 dark:text-white">{{ form.type === 'deposit' ? $t('customers.deposit_new') : $t('customers.withdraw_balance') }}</h3>
+              <p class="text-sm text-slate-500">{{ $t('transactions.new_transaction') }}</p>
+            </div>
+          </div>
+          <button @click="showAddModal = false" class="p-2 hover:bg-black/5 rounded-xl transition-all">
+            <X class="w-6 h-6 text-slate-400" />
           </button>
         </div>
 
-        <form @submit.prevent="handleAddTransaction" class="p-8 space-y-6">
+        <form @submit.prevent="handleAddTransaction" class="p-10 space-y-8">
           <!-- Customer Selection -->
           <div class="space-y-2">
-            <label class="text-sm font-bold text-slate-700 dark:text-slate-300">{{ $t('transactions.select_customer') }}</label>
+            <label class="text-xs font-bold text-slate-500 block">{{ $t('transactions.select_customer') }}</label>
             <div class="relative">
-              <User class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
               <select 
                 v-model="form.customer_id" 
                 required 
-                class="w-full bg-slate-100 dark:bg-white/5 border-none rounded-2xl pr-12 pl-4 py-4 appearance-none focus:ring-2 focus:ring-emerald-500"
+                class="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 text-sm font-bold text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-emerald-500 focus:outline-none appearance-none cursor-pointer"
               >
                 <option value="" disabled>{{ $t('transactions.select_customer_placeholder') }}</option>
                 <option v-for="c in customers" :key="c.id" :value="c.id">
                   {{ c.name }} ({{ c.mobile_number }})
                 </option>
               </select>
+              <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400">
+                <ChevronDown class="w-5 h-5" />
+              </div>
             </div>
           </div>
 
@@ -741,42 +761,103 @@ onMounted(async () => {
             </button>
           </div>
 
-          <!-- Amount -->
-          <div class="space-y-2">
-            <label class="text-sm font-bold text-slate-700 dark:text-slate-300">{{ $t('transactions.table.amount') }} ({{ $t('common.currency') }})</label>
+          <!-- Interactive Input Fields based on Tx Type -->
+          <div v-if="form.type === 'deposit' && form.offer_id === ''" class="space-y-6">
+            <!-- Amount to Add (الرصيد المضاف) & Cash Paid (المبلغ المدفوع كاش) -->
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-500">المبلغ المدفوع كاش</label>
+                <input 
+                  v-model="form.paid_amount" 
+                  type="number" 
+                  required
+                  step="0.01" 
+                  placeholder="0.00"
+                  class="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 font-black text-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" 
+                />
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-500">الرصيد المضاف</label>
+                <input 
+                  v-model="form.amount" 
+                  type="number" 
+                  required
+                  step="0.01" 
+                  placeholder="0.00"
+                  class="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-4 font-black text-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" 
+                />
+              </div>
+            </div>
+
+            <!-- Savings Feedback -->
+            <div class="bg-emerald-500/5 border border-emerald-500/10 p-4 rounded-2xl flex items-center justify-between">
+              <span class="text-sm font-bold text-slate-500 dark:text-slate-400">المبلغ الموفر للعميل:</span>
+              <span class="text-xl font-black text-emerald-500">
+                {{ Math.max(0, Number(form.amount || 0) - Number(form.paid_amount || 0)) }} {{ $t('common.currency') }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Simple Amount Input for Withdrawal / Offer Deposit -->
+          <div v-else class="space-y-4">
+            <label class="text-center block text-sm font-bold text-slate-500 uppercase tracking-widest">{{ $t('transactions.table.amount') }}</label>
             <input 
               v-model="form.amount" 
               type="number" 
-              required 
+              required
               step="0.01" 
               placeholder="0.00"
-              class="w-full bg-slate-100 dark:bg-white/5 border-none rounded-2xl px-6 py-4 text-center text-3xl font-black text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500" 
+              class="w-full bg-transparent border-none text-center text-6xl font-black text-slate-900 dark:text-white focus:ring-0 placeholder:text-slate-200 dark:placeholder:text-slate-800" 
+              :readonly="form.type === 'deposit' && form.offer_id !== ''"
+              :class="(form.type === 'deposit' && form.offer_id !== '') ? 'opacity-50 cursor-not-allowed' : ''"
             />
           </div>
 
-          <!-- Offer Selection -->
-          <div v-if="form.type === 'deposit'" class="space-y-2">
-            <label class="text-sm font-bold text-slate-700 dark:text-slate-300">{{ $t('transactions.link_subscription') }}</label>
-            <div class="grid grid-cols-1 gap-2">
-              <select 
-                v-model="form.offer_id" 
-                class="w-full bg-slate-100 dark:bg-white/5 border-none rounded-2xl px-4 py-4 appearance-none focus:ring-2 focus:ring-emerald-500 text-sm font-bold"
+          <!-- Subscription Selection in Tx Modal (for deposit) -->
+          <div v-if="form.type === 'deposit' && availableOffers.length > 0" class="space-y-4">
+            <label class="text-center block text-sm font-bold text-slate-500 uppercase tracking-widest">{{ $t('customers.select_offer') }}</label>
+            <div class="grid grid-cols-1 gap-3">
+              <button 
+                type="button"
+                @click="form.offer_id = ''; form.amount = ''; form.paid_amount = '';"
+                :class="form.offer_id === '' ? 'bg-emerald-500 text-slate-950 border-emerald-500 scale-105 shadow-lg' : 'bg-slate-100 dark:bg-white/5 text-slate-500 border-transparent hover:bg-slate-200'"
+                class="px-6 py-4 rounded-[24px] border-2 text-base font-black transition-all flex items-center justify-between group"
               >
-                <option value="">{{ $t('customers.no_offer_prepaid') }}</option>
-                <option v-for="offer in availableOffers" :key="offer.id" :value="offer.id">
-                  {{ offer.name }} ({{ offer.price }} {{ $t('common.currency') }})
-                </option>
-              </select>
+                <div class="flex items-center gap-4">
+                  <div :class="form.offer_id === '' ? 'bg-white/20' : 'bg-emerald-500/10'" class="w-10 h-10 rounded-xl flex items-center justify-center">
+                    <Wallet class="w-5 h-5" :class="form.offer_id === '' ? 'text-slate-950' : 'text-emerald-500'" />
+                  </div>
+                  <span>{{ $t('customers.no_offer_prepaid') }}</span>
+                </div>
+              </button>
+
+              <button 
+                type="button"
+                v-for="offer in availableOffers" 
+                :key="offer.id"
+                @click="form.offer_id = offer.id; form.amount = offer.price; form.paid_amount = offer.price;"
+                :class="form.offer_id === offer.id ? 'bg-emerald-500 text-slate-950 border-emerald-500 scale-105 shadow-lg' : 'bg-slate-100 dark:bg-white/5 text-slate-500 border-transparent hover:bg-slate-200'"
+                class="px-6 py-5 rounded-[24px] border-2 text-base font-black transition-all flex items-center justify-between group"
+              >
+                <div class="flex items-center gap-4">
+                  <div :class="form.offer_id === offer.id ? 'bg-white/20' : 'bg-emerald-500/10'" class="w-10 h-10 rounded-xl flex items-center justify-center">
+                    <Sparkles class="w-5 h-5 text-emerald-500" />
+                  </div>
+                  <span>{{ offer.name }}</span>
+                </div>
+                <div class="text-lg font-black">{{ offer.price }} {{ $t('common.currency') }}</div>
+              </button>
             </div>
           </div>
 
           <!-- Note -->
           <div class="space-y-2">
-            <label class="text-sm font-bold text-slate-700 dark:text-slate-300">{{ $t('common.optional') }}</label>
+            <label class="text-xs font-bold text-slate-500 block">{{ $t('common.optional') }}</label>
             <textarea 
               v-model="form.note" 
               rows="2"
-              class="w-full bg-slate-100 dark:bg-white/5 border-none rounded-2xl px-4 py-3 focus:ring-2 focus:ring-emerald-500"
+              class="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
               :placeholder="$t('transactions.note_placeholder')"
             ></textarea>
           </div>
@@ -784,7 +865,7 @@ onMounted(async () => {
           <button 
             type="submit" 
             :disabled="submittng"
-            class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black py-5 rounded-2xl mt-4 hover:shadow-xl transition-all disabled:opacity-50"
+            class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black py-5 rounded-[24px] text-lg hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-emerald-500/10"
           >
             {{ submittng ? $t('common.loading') : $t('common.confirm') }}
           </button>
