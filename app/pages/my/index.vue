@@ -43,6 +43,7 @@ const wallets = ref([])
 const selectedShopId = ref('')
 const loading = ref(true)
 const currentTab = ref('home') // 'home', 'transactions', 'offers'
+const overallTotalSaved = ref(0)
 
 const fetchData = async () => {
   try {
@@ -55,6 +56,7 @@ const fetchData = async () => {
     transactions.value = res.transactions
     subscriptions.value = res.subscriptions
     wallets.value = res.wallets || []
+    overallTotalSaved.value = res.overallTotalSaved || 0
 
     if (res.shop && !selectedShopId.value) {
       selectedShopId.value = res.shop.id
@@ -224,7 +226,7 @@ onMounted(fetchData)
             <div class="flex items-end justify-between border-t border-white/10 pt-4">
               <div>
                 <span class="text-[9px] uppercase font-bold text-white/50 block mb-0.5">إجمالي المبلغ الموفر</span>
-                <span class="font-black text-sm text-emerald-300">{{ customer?.total_saved || 0 }} {{ $t('common.currency') }}</span>
+                <span class="font-black text-sm text-emerald-300">{{ overallTotalSaved }} {{ $t('common.currency') }}</span>
               </div>
               <div class="text-right">
                 <span class="text-[9px] uppercase font-bold text-white/50 block mb-0.5">رقم العضوية</span>
@@ -244,7 +246,7 @@ onMounted(fetchData)
             <div class="space-y-1">
               <p class="text-xs font-black text-emerald-600 dark:text-emerald-400">لقد وفرت مع تقدر بلس 🎁</p>
               <h4 class="text-3xl font-black text-slate-900 dark:text-white">
-                {{ customer?.total_saved || 0 }} <span class="text-xs font-bold opacity-75">{{ $t('common.currency') }}</span>
+                {{ overallTotalSaved }} <span class="text-xs font-bold opacity-75">{{ $t('common.currency') }}</span>
               </h4>
               <p class="text-[10px] text-slate-500">استمر في استخدام تقدر بلس لزيادة مدخراتك!</p>
             </div>

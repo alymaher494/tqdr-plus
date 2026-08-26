@@ -259,6 +259,7 @@
       "suspended_alert": "Your account is currently suspended. Please contact administration.",
       "total_customers": "Total Customers",
       "total_balances": "Total Balances",
+      "total_operations": "Total Operations",
       "today_deposits": "Today's Deposits",
       "today_withdrawals": "Today's Withdrawals",
       "active_subscriptions": "Active Subscriptions Details",

@@ -137,7 +137,7 @@ const fetchStats = async () => {
       txQuery
     ])
 
-    const totalVolume = txRes.data?.reduce((acc, curr) => acc + Number(curr.amount), 0) || 0
+    const totalVolume = txRes.data?.filter(t => t.type === 'deposit').reduce((acc, curr) => acc + Number(curr.amount), 0) || 0
     const txCount = txRes.data?.length || 0
 
     displayStats.value[0].value = shopsRes.count?.toString() || '0'
@@ -151,7 +151,7 @@ const fetchStats = async () => {
     sevenDaysAgo.setHours(0,0,0,0)
 
     const [histTx, histShops, histCust] = await Promise.all([
-      client.from('transactions').select('amount, created_at').gte('created_at', sevenDaysAgo.toISOString()).order('created_at'),
+      client.from('transactions').select('amount, type, created_at').gte('created_at', sevenDaysAgo.toISOString()).order('created_at'),
       client.from('profiles').select('created_at').eq('role', 'shop_owner').gte('created_at', sevenDaysAgo.toISOString()).order('created_at'),
       client.from('customers').select('created_at').gte('created_at', sevenDaysAgo.toISOString()).order('created_at')
     ])
@@ -167,7 +167,7 @@ const fetchStats = async () => {
       const dateStr = d.toLocaleDateString(locale.value === 'ar' ? 'ar-EG' : 'en-US', { weekday: 'short', day: 'numeric' })
       days.push(dateStr)
 
-      const dayTxs = histTx.data?.filter(t => new Date(t.created_at).toDateString() === d.toDateString())
+      const dayTxs = histTx.data?.filter(t => t.type === 'deposit' && new Date(t.created_at).toDateString() === d.toDateString())
       vData.push(dayTxs?.reduce((acc, curr) => acc + Number(curr.amount), 0) || 0)
 
       const dayShops = histShops.data?.filter(s => new Date(s.created_at).toDateString() === d.toDateString())
@@ -206,7 +206,9 @@ const fetchStats = async () => {
       const name = tx.shop.shop_name || tx.shop.email.split('@')[0]
       if (!perfMap[name]) perfMap[name] = { name, count: 0, volume: 0 }
       perfMap[name].count++
-      perfMap[name].volume += Number(tx.amount)
+      if (tx.type === 'deposit') {
+        perfMap[name].volume += Number(tx.amount)
+      }
     })
     shopsPerformance.value = Object.values(perfMap).sort((a, b) => b.volume - a.volume).slice(0, 10)
 
