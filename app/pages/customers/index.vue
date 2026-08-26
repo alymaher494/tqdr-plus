@@ -332,23 +332,14 @@ const handleQuickTx = async () => {
       }
     }
 
-    // 2. Update Customer Balance and Total Saved
+    // 2. Insert Transaction First (to pass the database check trigger on old balance)
     const isPrepaidWithdrawal = txForm.value.type === 'withdrawal' && txForm.value.service_type === 'prepaid'
     const isOfferWithdrawal = txForm.value.type === 'withdrawal' && txForm.value.service_type === 'offer'
     const isDeposit = txForm.value.type === 'deposit'
     const newTotalSaved = (isPrepaidWithdrawal || isOfferWithdrawal || (isDeposit && txForm.value.offer_id))
       ? (Number(customer.total_saved) || 0) + savingAmount
       : (Number(customer.total_saved) || 0)
-    
-    if (isDeposit || isPrepaidWithdrawal || isOfferWithdrawal) {
-      const { error: custError } = await client.from('customers').update({
-        balance: isOfferWithdrawal ? balanceBefore : balanceAfter,
-        total_saved: newTotalSaved
-      }).eq('id', customer.id)
-      if (custError) throw custError
-    }
 
-    // 3. Create Transaction
     const { error: txError } = await client.from('transactions').insert({
       customer_id: customer.id,
       shop_owner_id: currentUser.id,
@@ -362,6 +353,15 @@ const handleQuickTx = async () => {
       offer_id: (txForm.value.type === 'deposit' && txForm.value.offer_id) ? txForm.value.offer_id : (txForm.value.service_type === 'offer' ? txForm.value.offer_id || null : null)
     })
     if (txError) throw txError
+
+    // 3. Update Customer Balance and Total Saved only after transaction is successfully recorded
+    if (isDeposit || isPrepaidWithdrawal || isOfferWithdrawal) {
+      const { error: custError } = await client.from('customers').update({
+        balance: isOfferWithdrawal ? balanceBefore : balanceAfter,
+        total_saved: newTotalSaved
+      }).eq('id', customer.id)
+      if (custError) throw custError
+    }
     
     txSuccess.value = true
     

@@ -120,6 +120,9 @@ const handleVerifyOTP = async () => {
             <input 
               v-model="otpCode"
               type="text" 
+              inputmode="numeric"
+              pattern="[0-9]*"
+              autocomplete="one-time-code"
               required
               maxlength="6"
               placeholder="000000"
