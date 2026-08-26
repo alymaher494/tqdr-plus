@@ -70,8 +70,50 @@ const fetchData = async () => {
   }
 }
 
+let realtimeChannel: any = null
+
+const setupRealtime = () => {
+  if (!customer.value || realtimeChannel) return
+
+  realtimeChannel = client
+    .channel('customer-updates')
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'transactions',
+        filter: `customer_id=eq.${customer.value.id}`
+      },
+      async () => {
+        try {
+          const url = selectedShopId.value ? `/api/customer/data?shop_id=${selectedShopId.value}` : '/api/customer/data'
+          const res = await $fetch(url)
+          customer.value = res.customer
+          shop.value = res.shop
+          transactions.value = res.transactions
+          subscriptions.value = res.subscriptions
+          wallets.value = res.wallets || []
+        } catch (err) {
+          console.error('Realtime Refresh Error:', err)
+        }
+      }
+    )
+    .subscribe()
+}
+
+onMounted(async () => {
+  await fetchData()
+  setupRealtime()
+})
+
+onUnmounted(() => {
+  if (realtimeChannel) {
+    client.removeChannel(realtimeChannel)
+  }
+})
+
 const handleLogout = async () => {
-  // مسح الكوكي httpOnly يتم من جهة الخادم (لا يمكن للمتصفح مسحه)
   try {
     await $fetch('/api/auth/logout', { method: 'POST' })
   } catch { /* ignore */ }
