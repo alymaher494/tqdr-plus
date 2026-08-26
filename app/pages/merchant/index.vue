@@ -4,6 +4,7 @@ import {
   Wallet, 
   Activity, 
   ArrowUpRight,
+  DollarSign,
   Plus,
   ArrowRight,
   TrendingUp,
@@ -12,8 +13,7 @@ import {
   Calendar,
   Layers,
   Sparkles,
-  ChevronDown,
-  DollarSign
+  ChevronDown
 } from 'lucide-vue-next'
 
 const ApexChart = defineAsyncComponent(() => import('vue3-apexcharts'))
@@ -30,8 +30,8 @@ const user = useSupabaseUser()
 const stats = computed(() => [
   { label: t('dashboard.merchant_stats.total_customers'), value: '0', icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
   { label: t('dashboard.merchant_stats.total_balances'), value: '0', icon: Wallet, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-  { label: t('dashboard.merchant_stats.total_operations'), value: '0', icon: ArrowUpRight, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-  { label: t('dashboard.merchant_stats.today_deposits'), value: '0', icon: DollarSign, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+  { label: t('dashboard.merchant_stats.today_deposits'), value: '0', icon: ArrowUpRight, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+  { label: t('dashboard.merchant_stats.today_cash_received'), value: '0', icon: DollarSign, color: 'text-amber-500', bg: 'bg-amber-500/10' },
   { label: t('dashboard.merchant_stats.today_withdrawals'), value: '0', icon: Activity, color: 'text-red-500', bg: 'bg-red-500/10' },
 ])
 
@@ -181,14 +181,14 @@ const fetchDashboardData = async () => {
     const todayStart = new Date()
     todayStart.setHours(0, 0, 0, 0)
     const todayTxs = txData?.filter(tx => new Date(tx.created_at) >= todayStart)
-    const todayTotalOperations = todayTxs?.filter(t => t.type === 'deposit').reduce((acc, curr) => acc + Number(curr.amount), 0) || 0
-    const todayCashDeposits = todayTxs?.filter(t => t.type === 'deposit').reduce((acc, curr) => acc + Number(curr.paid_amount || 0), 0) || 0
+    const todayDeposits = todayTxs?.filter(t => t.type === 'deposit').reduce((acc, curr) => acc + Number(curr.amount), 0) || 0
+    const todayCashReceived = todayTxs?.filter(t => t.type === 'deposit').reduce((acc, curr) => acc + Number(curr.paid_amount || 0), 0) || 0
     const todayWithdrawals = todayTxs?.filter(t => t.type === 'withdrawal').reduce((acc, curr) => acc + Number(curr.amount), 0) || 0
 
     displayStats.value[0].value = (customersCount || 0).toString()
     displayStats.value[1].value = `${totalBalance.toLocaleString()} ${t('common.currency')}`
-    displayStats.value[2].value = `${todayTotalOperations.toLocaleString()} ${t('common.currency')}`
-    displayStats.value[3].value = `${todayCashDeposits.toLocaleString()} ${t('common.currency')}`
+    displayStats.value[2].value = `${todayDeposits.toLocaleString()} ${t('common.currency')}`
+    displayStats.value[3].value = `${todayCashReceived.toLocaleString()} ${t('common.currency')}`
     displayStats.value[4].value = `${todayWithdrawals.toLocaleString()} ${t('common.currency')}`
 
     // 5. Weekly Activity
@@ -251,9 +251,9 @@ onMounted(fetchDashboardData)
     </div>
 
     <!-- Stats Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <template v-if="loading">
-        <BaseCard v-for="i in 5" :key="i" class="relative overflow-hidden group">
+        <BaseCard v-for="i in 4" :key="i" class="relative overflow-hidden group">
           <div class="flex items-center justify-between">
             <Skeleton roundedClass="rounded-2xl w-12 h-12" />
             <Skeleton roundedClass="rounded-lg w-5 h-5" />

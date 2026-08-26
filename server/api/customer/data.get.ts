@@ -182,15 +182,12 @@ export default defineEventHandler(async (event) => {
       }
     })
 
-    const overallTotalSaved = customerRecords.reduce((sum, r) => sum + (Number(r.total_saved) || 0), 0)
-
     return {
       customer,
       shop,
       transactions: enrichedTransactions,
       subscriptions: enrichedSubscriptions,
-      wallets,
-      overallTotalSaved
+      wallets
     }
   } catch (e: any) {
     throw createError({ statusCode: e.statusCode || 500, message: e.message })
