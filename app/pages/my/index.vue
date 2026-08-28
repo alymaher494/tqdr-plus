@@ -284,7 +284,7 @@ onMounted(fetchData)
           <!-- Prominent Savings Encouragement Card -->
           <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-500/20 p-6 rounded-[32px] flex items-center justify-between shadow-sm">
             <div class="space-y-1">
-              <p class="text-xs font-black text-emerald-600 dark:text-emerald-400">لقد وفرت مع تقدر بلس 🎁</p>
+              <p class="text-xs font-black text-emerald-600 dark:text-emerald-400">لقد وفرت مع تقدر بلس</p>
               <h4 class="text-3xl font-black text-slate-900 dark:text-white">
                 {{ customer?.total_saved || 0 }} <span class="text-xs font-bold opacity-75">{{ $t('common.currency') }}</span>
               </h4>

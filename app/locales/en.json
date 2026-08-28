@@ -219,7 +219,7 @@
         }
       },
       "subscriptions_management": {
-        "title": "Subscriptions Management 💳",
+        "title": "Subscriptions Management",
         "subtitle": "Enable subscription feature for stores and monitor their offers.",
         "search_placeholder": "Search by shop name or email...",
         "shop_name_placeholder": "No Name",
@@ -450,35 +450,35 @@
       "subscribe_now": "Subscribe Now",
       "slides": [
         {
-          "badge": "Special Offer 🎁",
+          "badge": "Special Offer",
           "title": "One month free on prepayment service and subscriptions",
           "subtitle": "No contracts, no risks. Take advantage of the offer and see the difference.",
           "cta_primary": "Get Started",
           "cta_secondary": "Discover More"
         },
         {
-          "badge": "Digital Loyalty 🇸🇦",
+          "badge": "Digital Loyalty",
           "title": "First Saudi loyalty system based on prepayment for discount",
           "subtitle": "Document and track all prepayment operations and subscriptions for your business",
           "cta_primary": "Join Us",
           "cta_secondary": "Security Details"
         },
         {
-          "badge": "Smart Data 📊",
+          "badge": "Smart Data",
           "title": "Restaurant, Cafe, Laundry, Beauty Center, Student Services...",
           "subtitle": "Know your customer data, when they come, how many times, how much they spend, and guarantee they return tomorrow.",
           "cta_primary": "Start Growing",
           "cta_secondary": "View Stats"
         },
         {
-          "badge": "Effective Communication 💬",
+          "badge": "Effective Communication",
           "title": "SMS messages for shop customers to confirm balance and discount",
           "subtitle": "Tqdr Plus strengthens the relationship between merchants and their customers",
           "cta_primary": "Join Now",
           "cta_secondary": "Live Demo"
         },
         {
-          "badge": "Ease of Use ✨",
+          "badge": "Ease of Use",
           "title": "Secure, easy interface, suitable for all cashier devices and mobile phones",
           "subtitle": "Quick activation, easy to use safely, fits the nature of your project whatever your business activity.",
           "cta_primary": "Get Started",
@@ -487,7 +487,7 @@
       ]
     },
     "stats": {
-      "badge": "Amazing Stats 📊",
+      "badge": "Amazing Stats",
       "title": "Kingdom's Largest Loyalty Network",
       "subtitle": "We take pride in supporting thousands of merchants and millions of customers.",
       "partners": "Partners",
@@ -524,7 +524,7 @@
       ]
     },
     "customer_features": {
-      "badge": "Customer Benefits ✨",
+      "badge": "Customer Benefits",
       "title": "Easier & Smarter Shopping",
       "subtitle": "Save money and track your balances in your favorite stores via one secure platform.",
       "features": [

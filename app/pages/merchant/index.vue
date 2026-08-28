@@ -231,9 +231,8 @@ onMounted(fetchDashboardData)
     <!-- Welcome Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
       <div>
-        <h1 class="text-5xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-4">
-          <span>{{ $t('dashboard.welcome') }}، {{ profile?.shop_name || user?.email?.split('@')[0] }}</span>
-          <span class="animate-bounce">👋</span>
+        <h1 class="text-5xl font-black text-slate-900 dark:text-white tracking-tight">
+          {{ $t('dashboard.welcome') }}، {{ profile?.shop_name || user?.email?.split('@')[0] }}
         </h1>
         <p class="text-slate-500 dark:text-slate-400 mt-3 font-medium text-lg">{{ $t('dashboard.merchant_stats.welcome_desc') }}</p>
       </div>
@@ -481,7 +480,7 @@ onMounted(fetchDashboardData)
                       <component :is="tx.type === 'deposit' ? Plus : Activity" class="w-5 h-5" />
                     </div>
                     <span class="font-black text-sm" :class="tx.type === 'deposit' ? 'text-emerald-500' : 'text-red-500'">
-                      {{ tx.offer_id ? (tx.type === 'deposit' ? 'تفعيل اشتراك' : 'استهلاك زيارة ⚡') : (tx.type === 'deposit' ? $t('dashboard.merchant_stats.deposit') : $t('dashboard.merchant_stats.withdrawal')) }}
+                      {{ tx.offer_id ? (tx.type === 'deposit' ? 'تفعيل اشتراك' : 'استهلاك زيارة') : (tx.type === 'deposit' ? $t('dashboard.merchant_stats.deposit') : $t('dashboard.merchant_stats.withdrawal')) }}
                     </span>
                   </div>
                 </td>

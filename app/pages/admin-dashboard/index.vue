@@ -236,7 +236,7 @@ watch([dateFilter, customRange], fetchStats)
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
       <div>
         <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-          {{ $t('dashboard.welcome_back') }}, {{ $t('nav.admin_panel') }} 🛡️
+          {{ $t('dashboard.welcome_back') }}, {{ $t('nav.admin_panel') }}
         </h1>
         <p class="text-slate-500 dark:text-slate-400 mt-2 font-medium text-lg">{{ $t('dashboard.admin_stats.welcome_title') }}</p>
       </div>
