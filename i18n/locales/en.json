@@ -126,7 +126,7 @@
     "admin_stats": {
       "shops": "Total Shops",
       "customers": "Total Customers",
-      "volume": "Transaction Volume",
+      "volume": "Total Actual Deposits",
       "growth": "Monthly Growth",
       "total_transactions": "Total Transactions",
       "welcome_title": "Comprehensive report on the overall performance of Tqdr Plus.",
@@ -259,7 +259,8 @@
       "suspended_alert": "Your account is currently suspended. Please contact administration.",
       "total_customers": "Total Customers",
       "total_balances": "Total Balances",
-      "today_deposits": "Today's Deposits",
+      "today_deposits": "Today's Total Operations",
+      "today_cash_received": "Cash Received Today",
       "today_withdrawals": "Today's Withdrawals",
       "active_subscriptions": "Active Subscriptions Details",
       "active_now": "Active Now",
