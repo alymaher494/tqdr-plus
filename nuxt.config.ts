@@ -15,10 +15,10 @@ export default defineNuxtConfig({
     port: 3005
   },
   runtimeConfig: {
-    smsUsername: process.env.SMS_USERNAME,
-    smsPassword: process.env.SMS_PASSWORD,
-    smsSender: process.env.SMS_SENDER,
-    smsToken: process.env.SMS_TOKEN
+    smsUsername: process.env.SMS_USERNAME || process.env.NUXT_SMS_USERNAME,
+    smsPassword: process.env.SMS_PASSWORD || process.env.NUXT_SMS_PASSWORD,
+    smsSender: process.env.SMS_SENDER || process.env.NUXT_SMS_SENDER || 'TQDR',
+    smsToken: process.env.SMS_TOKEN || process.env.NUXT_SMS_TOKEN
   },
 
   routeRules: {

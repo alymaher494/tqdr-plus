@@ -39,6 +39,7 @@ export default defineEventHandler(async (event) => {
     const response = await sendSMS(phone, message)
     return { success: true, response }
   } catch (error: any) {
+    console.error('[API /api/sms/send Failed]:', error.data || error.message || error)
     return { success: false, error: error.data || error.message }
   }
 })
